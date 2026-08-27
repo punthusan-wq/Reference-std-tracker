@@ -453,6 +453,20 @@ pre.code{background:var(--paper);color:var(--ink);border:1px solid var(--line);p
 <!-- ========== DATA ========== -->
 <section id="tab-data" class="tab">
   <div class="card" style="margin-bottom:16px">
+    <h3>ที่อยู่เว็บสำหรับ QR</h3>
+    <div class="body">
+      <p class="muted" style="margin-top:0">ค่านี้ถูกฝังลงใน QR ทุกใบที่พิมพ์ เพื่อให้สแกนแล้วเปิดหน้าข้อมูลเครื่องมือได้ทันที</p>
+      <div class="row">
+        <div style="flex:1;min-width:260px"><label class="f" for="siteUrl">ที่อยู่เว็บของระบบ</label>
+          <input type="text" id="siteUrl" class="mono" style="font-size:12.5px" placeholder="https://punthusan-wq.github.io/std-tracker/"></div>
+        <button class="btn ghost" id="btnSiteAuto">ใช้ที่อยู่ปัจจุบัน</button>
+        <button class="btn" id="btnSiteSave">บันทึก</button>
+      </div>
+      <p class="muted" id="siteState" style="margin:10px 0 0"></p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
     <h3>เวลานำของสายงาน · ผู้วางแผนกำหนดเอง</h3>
     <div class="body">
       <p class="muted" style="margin-top:0">ระบบใช้ค่าเหล่านี้คำนวณย้อนกลับจากวันครบกำหนด เพื่อบอกว่าต้องเริ่มออก RS วันไหน แก้ค่าให้ตรงกับเวลาจริงของแต่ละกลุ่ม แล้วจุดแจ้งเตือนทั้งระบบจะขยับตาม</p>
@@ -1061,10 +1075,7 @@ $('#btnLabels').onclick=()=>{
     return [s.desc,s.eq,s.pn,s.sn,s.cert].join(' ').toLowerCase().includes(q);
   });
   if(!rows.length) return toast('ไม่มีรายการตามตัวกรองปัจจุบัน');
-  if(!siteBase()){
-    const u=prompt('ยังไม่ทราบที่อยู่เว็บของระบบ ใส่ URL เพื่อให้ QR เปิดหน้าเครื่องมือได้\nเว้นว่างเพื่อสร้าง QR แบบเก็บรหัส EQ อย่างเดียว','');
-    if(u&&u.trim()){ db.settings.siteUrl=u.trim(); save('ตั้งที่อยู่เว็บสำหรับ QR'); }
-  }
+  if(!siteBase()) toast('ยังไม่ได้ตั้งที่อยู่เว็บ QR จะเก็บแค่รหัส EQ · ตั้งได้ที่แท็บข้อมูลและตั้งค่า');
   const area=$('#printArea');
   area.innerHTML='<h3 style="font-size:14px;margin:0 0 10px">ป้าย QR '+rows.length+' รายการ</h3><div class="labels" id="lblWrap"></div>';
   area.style.display='block';
@@ -1400,6 +1411,28 @@ $('#btnReset').onclick=()=>{
   if(!confirm('ล้างข้อมูลทั้งหมดและเริ่มใหม่จากรายการตั้งต้น? ควรดาวน์โหลดไฟล์สำรองก่อน')) return;
   localStorage.removeItem(KEY); load(); boot(); toast('ล้างข้อมูลแล้ว');
 };
+function renderSite(){
+  const cur=(db.settings.siteUrl||'').trim();
+  $('#siteUrl').value=cur;
+  const auto=location.protocol==='file:'? '' : location.href.split('?')[0];
+  const used=cur||auto;
+  const demo=used? used+'?eq=30008294' : 'EQ:30008294';
+  $('#siteState').innerHTML = used
+    ? 'QR จะเก็บลิงก์แบบนี้ <span class="mono">'+esc(demo)+'</span>'+
+      (cur?'':' · ใช้ที่อยู่ปัจจุบันอัตโนมัติ ไม่ต้องกรอกก็ได้')
+    : '<b style="color:var(--warn)">ยังไม่ได้ตั้งที่อยู่</b> ตอนนี้เปิดจากไฟล์ในเครื่อง QR จะเก็บแค่รหัส <span class="mono">EQ:30008294</span> ซึ่งสแกนได้เฉพาะในโปรแกรมนี้ สแกนด้วยกล้องมือถือทั่วไปจะไม่เปิดอะไร';
+}
+$('#btnSiteAuto').onclick=()=>{
+  if(location.protocol==='file:') return toast('ตอนนี้เปิดจากไฟล์ในเครื่อง ยังไม่มีที่อยู่เว็บให้ใช้');
+  $('#siteUrl').value=location.href.split('?')[0]; toast('ใส่ที่อยู่ปัจจุบันแล้ว กดบันทึกเพื่อยืนยัน');
+};
+$('#btnSiteSave').onclick=()=>{
+  let u=$('#siteUrl').value.trim();
+  if(u&&!/^https?:\/\//i.test(u)) return toast('ที่อยู่ต้องขึ้นต้นด้วย https:// หรือ http://');
+  db.settings.siteUrl=u.replace(/[?#].*$/,'');
+  save(u?'ตั้งที่อยู่เว็บสำหรับ QR เป็น '+db.settings.siteUrl:'ล้างที่อยู่เว็บสำหรับ QR');
+  renderSite(); toast(u?'บันทึกแล้ว QR ที่พิมพ์หลังจากนี้จะใช้ที่อยู่ใหม่':'ล้างค่าแล้ว ระบบจะใช้ที่อยู่ปัจจุบันแทน');
+};
 function renderLead(){
   const sel=$('#leadCat');
   if(!sel.dataset.f){ sel.dataset.f=1;
@@ -1693,7 +1726,7 @@ function render(tab){
   else if(tab==='reg') renderReg();
   else if(tab==='ic') renderIC();
   else if(tab==='mail'){ loadMailSettings(); loadDaily(); syncDg(); if(!$('#mBody').value) buildMail(); }
-  else if(tab==='data'){ renderLead(); renderLog(); }
+  else if(tab==='data'){ renderSite(); renderLead(); renderLog(); }
   else if(tab==='help') renderHelp();
 }
 function healthCheck(){
