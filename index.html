@@ -23,6 +23,8 @@
   --hdr:linear-gradient(135deg,#001f4d 0%,#003f87 50%,#0066cc 100%);
   --hdrLine:#00b8d9;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.28);
+  --c-cyan:#00b8d9; --c-sky:#4aa3ff; --c-mint:#2bd6a8; --c-lime:#8bd450;
+  --c-amber:#ffb300; --c-orange:#ff8a3d; --c-coral:#ff6b6b; --c-violet:#b47cf0;
 }
 /* THEME 2 · THAI AIRWAYS PURPLE */
 html[data-theme="thai-airways"]{
@@ -34,6 +36,8 @@ html[data-theme="thai-airways"]{
   --hdr:linear-gradient(135deg,#7a1450 0%,#c0117c 50%,#e0258f 100%);
   --hdrLine:#f9d431;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(192,17,124,.18);
+  --c-cyan:#f9d431; --c-sky:#e0258f; --c-mint:#2bd6a8; --c-lime:#a8d84f;
+  --c-amber:#ffc44d; --c-orange:#ff8a3d; --c-coral:#ff7b9c; --c-violet:#c98ae8;
 }
 .t-ok{background:rgba(0,200,83,.14);color:#00c853}
 .t-warn{background:rgba(255,179,0,.14);color:#ffb300}
@@ -41,10 +45,15 @@ html[data-theme="thai-airways"]{
 .t-soon{background:rgba(0,184,217,.14);color:var(--accent-tx)}
 .kpi:before{background:var(--thai-purple)}
 .kpi.k-ok:before{background:var(--ok)}
-.stage.filled .track{background:linear-gradient(90deg,var(--thai-magenta),var(--thai-purple))}
-.stage-no{background:var(--thai-magenta)}
-.stage.filled .stage-no{background:var(--thai-purple)}
-.jcard{border-left-color:var(--thai-purple)}
+.stage{--sc:var(--ink-2)}
+.stage.filled .track{background:var(--sc);box-shadow:0 0 10px -2px var(--sc)}
+.stage.filled .stage-no{box-shadow:0 0 10px -3px var(--sc)}
+.stage.filled .jcard{border-left-color:var(--sc)}
+.jcard .d{color:var(--ink)}
+.stage.filled .jcard .d{color:var(--sc)}
+.stg .d.on{background:var(--c-mint)}
+.stg .d.cur{background:var(--c-amber)}
+.stg .n{color:var(--c-amber);font-weight:600}
 #icAlert{border-color:rgba(229,57,53,.5)!important}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -53,6 +62,21 @@ body{
   background:var(--paper);color:var(--ink);font-size:15px;line-height:1.55;
 }
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+td.mono{color:var(--c-sky)}
+.heat th{color:var(--c-sky)}
+.heat tfoot td{color:var(--thai-gold)}
+.heat th.rowh{color:var(--c-violet);font-weight:700}
+.hd-pill b{color:var(--thai-gold)}
+.brand h1{color:#fff}
+.info dt{color:var(--c-sky)}
+.info dd b{color:var(--thai-gold)}
+label.f{color:var(--c-sky)}
+.steps .dt{color:var(--c-mint)}
+.steps li b{color:var(--thai-gold)}
+.doc-nav a.on{color:#fff}
+.bar .t b{color:var(--thai-gold)}
+.empty b{color:var(--c-amber)}
+.jcard .m{color:var(--muted)}
 button,input,select,textarea{font-family:inherit;font-size:inherit}
 a{color:var(--thai-magenta)}
 
@@ -85,7 +109,7 @@ main{max-width:1420px;margin:0 auto;padding:22px}
 
 /* ---------- generic ---------- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-.card h3{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-2);background:var(--panel);border-radius:14px 14px 0 0}
+.card h3{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--thai-gold);background:var(--panel);border-radius:14px 14px 0 0}
 .card .body{padding:16px}
 .grid{display:grid;gap:16px}
 .btn{background:var(--thai-magenta);color:#fff;border:0;border-radius:9px;padding:9px 15px;cursor:pointer;font-weight:500}
@@ -102,7 +126,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--thai-magenta);ou
 label.f{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2);
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--c-sky);
    padding:9px 10px;border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--card);z-index:1}
 td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
 tr:hover td{background:var(--hover)}
@@ -126,6 +150,13 @@ tr:hover td{background:var(--hover)}
 .kpi.k-warn:before{background:var(--warn)}
 .kpi.k-ok:before{background:var(--ok)}
 .kpi .lab{font-size:12px;color:var(--ink-2);font-weight:600}
+.kpi .val{color:var(--c-cyan)}
+.kpi.k-late .val{color:var(--c-coral)}
+.kpi.k-late .lab{color:var(--c-coral)}
+.kpi.k-warn .val{color:var(--c-amber)}
+.kpi.k-warn .lab{color:var(--c-amber)}
+.kpi.k-ok .val{color:var(--c-mint)}
+.kpi.k-ok .lab{color:var(--c-mint)}
 .kpi .val{font-size:32px;font-weight:700;line-height:1.15;letter-spacing:-.02em}
 .kpi .sub{font-size:12px;color:var(--ink-2)}
 
@@ -133,10 +164,10 @@ tr:hover td{background:var(--hover)}
 .board{display:flex;gap:0;overflow-x:auto;padding:4px 0 12px}
 .stage{min-width:158px;flex:1;position:relative;padding:0 6px}
 .stage-hd{display:flex;align-items:baseline;gap:7px;padding:0 4px 8px}
-.stage-no{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#fff;background:var(--thai-purple);
+.stage-no{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#0a0f1a;background:var(--sc);
   border-radius:5px;padding:1px 5px}
-.stage-hd .nm{font-size:12.5px;font-weight:600;line-height:1.25}
-.stage-hd .en{display:block;font-size:10.5px;color:var(--ink-2);font-weight:400;text-transform:uppercase;letter-spacing:.05em}
+.stage-hd .nm{font-size:12.5px;font-weight:700;line-height:1.25;color:var(--sc)}
+.stage-hd .en{display:block;font-size:10.5px;color:var(--muted);font-weight:400;text-transform:uppercase;letter-spacing:.05em}
 .track{height:4px;background:var(--line);border-radius:2px;margin:0 4px 10px;position:relative}
 .stage.filled .track{background:linear-gradient(90deg,var(--thai-purple),var(--thai-magenta))}
 .stage.filled .stage-no{background:var(--thai-magenta)}
@@ -163,7 +194,7 @@ tr:hover td{background:var(--hover)}
 .doc-nav a:hover{background:var(--hover);color:var(--accent-tx)}
 .doc-nav a.on{background:var(--thai-magenta);color:#fff}
 .doc-body h2{font-size:20px;color:var(--accent-tx);margin:0 0 4px;padding-bottom:8px;border-bottom:2px solid var(--thai-gold)}
-.doc-body h3{font-size:15px;margin:22px 0 6px;color:var(--ink)}
+.doc-body h3{font-size:15px;margin:22px 0 6px;color:var(--c-mint)}
 .doc-body p{margin:8px 0}
 .doc-body ol,.doc-body ul{margin:8px 0;padding-left:22px}
 .doc-body li{margin:4px 0}
@@ -837,9 +868,10 @@ function renderPipe(){
     .map(s=>'<option value="'+s.id+'">'+esc(s.desc)+' · EQ '+esc(s.eq)+' · ครบ '+fmt(s.due)+'</option>').join('')
     || '<option value="">ทุกเครื่องมือมีงานเปิดอยู่แล้ว</option>';
 
+  const SC=['--c-violet','--c-coral','--c-orange','--c-amber','--c-lime','--c-mint','--c-cyan','--c-sky','--c-mint'];
   $('#board').innerHTML=STAGES.map((st,i)=>{
     const js=db.jobs.filter(j=>j.stage===st.k && (st.k!=='done'||isRecent(j)));
-    return '<div class="stage'+(js.length?' filled':'')+'">'+
+    return '<div class="stage'+(js.length?' filled':'')+'" style="--sc:var('+SC[i]+')">'+
       '<div class="stage-hd"><span class="stage-no mono">'+String(i+1).padStart(2,'0')+'</span>'+
       '<span class="nm">'+st.th+'<span class="en">'+st.en+'</span></span></div>'+
       '<div class="track"></div><div class="slot">'+
