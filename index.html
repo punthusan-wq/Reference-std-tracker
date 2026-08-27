@@ -741,7 +741,7 @@ const pill=(v,l)=>'<div class="hd-pill"><b>'+v+'</b><span>'+l+'</span></div>';
 
 function renderDash(){
   const c=counts(), tot=db.stds.length;
-  const rate=tot?((tot-c.late)/tot*100).toFixed(1):'0.0';
+  const rate=tot? Number(((tot-c.late)/tot*100).toFixed(1)) : 0;
   const jobs=openJobs();
   const stuck=jobs.filter(j=>Math.round((today()-new Date(j.created))/864e5)>45).length;
   const pc={actLate:0,prep:0};
@@ -751,12 +751,18 @@ function renderDash(){
   const fails=icFails(); const missed=icMissedAll(new Date().getFullYear());
   const cl=cats(); const avgLead=cl.length? Math.round(cl.reduce((a,c)=>a+leadDays(c),0)/cl.length) : leadDays('');
   $('#kpiRow').innerHTML=[
-    kpi('ความพร้อมใช้ตามแผน',rate+'%','อ้างอิง ISO/IEC 17025 ข้อ 6.4', tot&&c.late===0?'k-ok':(c.late>tot*.05?'k-late':'k-warn')),
-    kpi('เกินกำหนดสอบเทียบ',c.late,'ต้องระงับการใช้งานทันที',c.late?'k-late':'k-ok'),
-    kpi('เลยจุดเริ่มงานแล้ว',pc.actLate,'ยังไม่เปิดงาน ทั้งที่เลยเวลานำ',pc.actLate?'k-late':'k-ok'),
-    kpi('ถึงเวลาเตรียมออก RS',pc.prep,'เวลานำเฉลี่ย '+avgLead+' วัน',pc.prep?'k-warn':''),
-    kpi('งานอยู่ระหว่างดำเนินการ',jobs.length,stuck?stuck+' งานค้างเกิน 45 วัน':'ไม่มีงานค้างนาน',stuck?'k-warn':''),
-    kpi('ผลตรวจระหว่างรอบไม่ผ่าน',fails.length,missed.length?'ค้างบันทึกผลอีก '+missed.length+' เดือน':'บันทึกผลครบตามแผน',fails.length?'k-late':(missed.length?'k-warn':'k-ok'))
+    kpi('ความพร้อมใช้ตามแผน',rate+'%',
+        'เกณฑ์ ผ่าน ≥95% · เฝ้าระวัง 85-95% · ต่ำกว่าเกณฑ์ <85%',
+        !tot?'':(rate>=95?'k-ok':rate>=85?'k-warn':'k-late')),
+    kpi('เกินกำหนดสอบเทียบ',c.late, c.late?'ต้องระงับการใช้งานทันที':'ไม่มีเครื่องมือเกินกำหนด', c.late?'k-late':'k-ok'),
+    kpi('เลยจุดเริ่มงานแล้ว',pc.actLate, pc.actLate?'ยังไม่เปิดงาน ทั้งที่เลยเวลานำ':'เปิดงานทันเวลานำทุกรายการ', pc.actLate?'k-late':'k-ok'),
+    kpi('ถึงเวลาเตรียมออก RS',pc.prep, pc.prep?'ควรออก RS ภายในเวลานำเฉลี่ย '+avgLead+' วัน':'ยังไม่มีรายการที่ต้องเตรียม', pc.prep?'k-warn':'k-ok'),
+    kpi('งานอยู่ระหว่างดำเนินการ',jobs.length,
+        stuck? stuck+' งานค้างเกิน 45 วัน' : (jobs.length?'ทุกงานอยู่ในกรอบเวลา':'ไม่มีงานค้างในสายงาน'),
+        stuck?'k-warn':'k-ok'),
+    kpi('ผลตรวจระหว่างรอบไม่ผ่าน',fails.length,
+        fails.length?'ต้องพิจารณาส่งสอบเทียบก่อนครบรอบ':(missed.length?'ค้างบันทึกผลอีก '+missed.length+' เดือน':'บันทึกผลครบตามแผน'),
+        fails.length?'k-late':(missed.length?'k-warn':'k-ok'))
   ].join('');
   const alertBox=$('#icAlert');
   if(fails.length){
