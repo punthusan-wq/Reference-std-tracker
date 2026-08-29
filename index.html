@@ -56,6 +56,11 @@ html[data-theme="thai-airways"]{
 .stg .n{color:var(--c-amber);font-weight:600}
 #icAlert{border-color:rgba(229,57,53,.5)!important}
 *{box-sizing:border-box}
+/* บอกระบบว่าหน้านี้เป็นธีมมืด เพื่อให้เมนู dropdown ปฏิทิน และ scrollbar ของเบราว์เซอร์วาดสีให้ถูก */
+html{color-scheme:dark}
+select option,select optgroup{background:#141e2e;color:#e8f0fe}
+html[data-theme="thai-airways"] select option,html[data-theme="thai-airways"] select optgroup{background:#2d1638;color:#f0e8fe}
+select:disabled,input:disabled{opacity:.55;cursor:not-allowed}
 html,body{margin:0;padding:0}
 body{
   font-family:'IBM Plex Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -188,6 +193,36 @@ tr:hover td{background:var(--hover)}
 .ic-grid td.m.fail{background:rgba(229,57,53,.18);color:#ff6b6b;font-weight:700}
 .ic-grid td.m.miss{background:rgba(255,179,0,.16);color:var(--warn);font-weight:700}
 .ic-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:12px}
+
+/* ---------- ทะเบียน STD: แยกสีคอลัมน์เป็นกลุ่ม ---------- */
+#regTbl th{background:var(--panel);border-bottom-width:3px;padding-top:11px;padding-bottom:11px}
+/* กลุ่ม 1 · ข้อมูลระบุตัวตน (1-5) */
+#regTbl th:nth-child(-n+5){color:var(--c-violet);border-bottom-color:var(--c-violet)}
+#regTbl td:nth-child(-n+5){background:color-mix(in srgb,var(--c-violet) 5%,transparent)}
+/* กลุ่ม 2 · รอบและกำหนดการ (6-9) */
+#regTbl th:nth-child(n+6):nth-child(-n+9){color:var(--c-cyan);border-bottom-color:var(--c-cyan)}
+#regTbl td:nth-child(n+6):nth-child(-n+9){background:color-mix(in srgb,var(--c-cyan) 6%,transparent)}
+#regTbl td:nth-child(6),#regTbl td:nth-child(7){color:var(--ink-2)}
+/* คอลัมน์ชี้ขาด · เริ่มงานภายใน และ ครบกำหนด */
+#regTbl th:nth-child(8),#regTbl th:nth-child(9){color:var(--thai-gold);border-bottom-color:var(--thai-gold)}
+#regTbl td:nth-child(8),#regTbl td:nth-child(9){background:color-mix(in srgb,var(--thai-gold) 8%,transparent);
+  color:var(--thai-gold);font-weight:600}
+/* กลุ่ม 3 · สถานะ (10-11) */
+#regTbl th:nth-child(10),#regTbl th:nth-child(11){color:var(--c-mint);border-bottom-color:var(--c-mint)}
+#regTbl td:nth-child(10),#regTbl td:nth-child(11){background:color-mix(in srgb,var(--c-mint) 5%,transparent)}
+/* กลุ่ม 4 · จัดการ */
+#regTbl th:nth-child(12){color:var(--muted);border-bottom-color:var(--line)}
+/* เส้นคั่นระหว่างกลุ่ม */
+#regTbl th:nth-child(6),#regTbl td:nth-child(6),
+#regTbl th:nth-child(10),#regTbl td:nth-child(10),
+#regTbl th:nth-child(12),#regTbl td:nth-child(12){border-left:2px solid var(--line)}
+#regTbl tr:hover td{filter:brightness(1.5)}
+/* สถานะเกินกำหนดสำคัญกว่าสีประจำกลุ่มคอลัมน์ จึงต้องเขียนทับ */
+#regTbl td.od{background:color-mix(in srgb,var(--late) 15%,transparent)!important;
+  color:var(--late)!important;font-weight:700}
+#regTbl td.od small{display:block;font-size:10px;font-weight:600;opacity:.9}
+.reg-key{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);margin-bottom:10px}
+.reg-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .doc{display:grid;grid-template-columns:230px 1fr;gap:20px;align-items:start}
 .doc-nav{position:sticky;top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
 .doc-nav a{display:block;padding:7px 10px;border-radius:8px;font-size:13px;color:var(--ink-2);text-decoration:none;line-height:1.35}
@@ -195,6 +230,7 @@ tr:hover td{background:var(--hover)}
 .doc-nav a.on{background:var(--thai-magenta);color:#fff}
 .doc-body h2{font-size:20px;color:var(--accent-tx);margin:0 0 4px;padding-bottom:8px;border-bottom:2px solid var(--thai-gold)}
 .doc-body h3{font-size:15px;margin:22px 0 6px;color:var(--c-mint)}
+.doc-body h4{font-size:13.5px;margin:16px 0 4px;color:var(--thai-gold)}
 .doc-body p{margin:8px 0}
 .doc-body ol,.doc-body ul{margin:8px 0;padding-left:22px}
 .doc-body li{margin:4px 0}
@@ -324,9 +360,17 @@ pre.code{background:var(--paper);color:var(--ink);border:1px solid var(--line);p
 
   <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
     <div class="card"><h3>งานค้างในสายงาน · แยกตามขั้นตอน</h3>
-      <div class="body"><canvas id="chStage" height="150"></canvas></div></div>
+      <div class="body"><canvas id="chStage" height="150"></canvas>
+        <p class="muted" id="stageNote" style="margin:12px 0 0"></p></div></div>
     <div class="card"><h3>อายุงานที่ค้างอยู่ (วันนับจากเปิดงาน)</h3>
       <div class="body" id="agingBox"></div></div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+    <div class="card"><h3>สาเหตุความล่าช้า · สะสมตั้งแต่เริ่มใช้ระบบ</h3>
+      <div class="body" id="delayBox"></div></div>
+    <div class="card"><h3>การรับทราบการแจ้งเตือน</h3>
+      <div class="body" id="ackBox"></div></div>
   </div>
 
   <div class="card">
@@ -370,6 +414,13 @@ pre.code{background:var(--paper);color:var(--ink);border:1px solid var(--line);p
         <div style="flex:2;min-width:200px"><label class="f" for="q">ค้นหา</label>
           <input type="text" id="q" placeholder="ชื่อ, EQ, P/N, S/N, เลขที่ใบรับรอง"></div>
         <div style="min-width:140px"><label class="f" for="fCat">กลุ่ม</label><select id="fCat"></select></div>
+        <div style="min-width:170px"><label class="f" for="fLife">สถานะการใช้งาน</label>
+          <select id="fLife">
+            <option value="active">ใช้งาน</option>
+            <option value="suspended">ระงับใช้ชั่วคราว</option>
+            <option value="retired">ปลดระวาง</option>
+            <option value="">ทั้งหมด</option>
+          </select></div>
         <div style="min-width:150px"><label class="f" for="fStg">ขั้นตอน</label>
           <select id="fStg"><option value="">ทุกขั้นตอน</option><option value="_none">ยังไม่เปิดงาน</option><option value="_open">มีงานเปิดอยู่</option></select></div>
         <div style="min-width:150px"><label class="f" for="fSt">สถานะ</label>
@@ -384,6 +435,12 @@ pre.code{background:var(--paper);color:var(--ink);border:1px solid var(--line);p
         <button class="btn ghost" id="btnScan">สแกน QR</button>
         <button class="btn ghost" id="btnLabels">พิมพ์ป้าย QR</button>
         <button class="btn ghost" id="btnXlsx">ส่งออก Excel</button>
+      </div>
+      <div class="reg-key">
+        <span><i style="background:var(--c-violet)"></i>ข้อมูลระบุตัวตน</span>
+        <span><i style="background:var(--c-cyan)"></i>รอบและกำหนดการ</span>
+        <span><i style="background:var(--thai-gold)"></i>วันชี้ขาด</span>
+        <span><i style="background:var(--c-mint)"></i>สถานะและขั้นตอน</span>
       </div>
       <div class="scroll"><table id="regTbl"></table></div>
       <p class="muted" id="regCount" style="margin:10px 0 0"></p>
@@ -560,7 +617,7 @@ pre.code{background:var(--paper);color:var(--ink);border:1px solid var(--line);p
 /* ============================================================
    LA-B STD Calibration Tracker — single file, localStorage only
    ============================================================ */
-const SEED = [{"cat":"Force","desc":"WEIGHT SET","eq":"30008294","pn":"TSD2078/TSD2079/TSD2080","sn":"5997-6000","intv":24,"cert":"25M1020(TPA)","cal":"2025-05-30","due":"2027-05-30"},{"cat":"Force","desc":"WEIGHT SET","eq":"30008295","pn":"TSD2085:TG000","sn":"59765983-59895996","intv":24,"cert":"25M1359(TPA)","cal":"2025-07-15","due":"2027-07-15"},{"cat":"Force","desc":"TOOL F CAL MASTER TORQUE","eq":"30008652","pn":"MLC0001P:TG000","sn":"MLC0019","intv":24,"cert":"24M1819(TPA)","cal":"2024-09-19","due":"2026-09-19"},{"cat":"Force","desc":"TOOL F CAL MASTER TORQUE","eq":"30008655","pn":"MLC0001P:TG000","sn":"7095631","intv":24,"cert":"25M392(TPA)","cal":"2025-02-20","due":"2027-02-20"},{"cat":"Force","desc":"WEIGHT TESTER 1-2-5KGS","eq":"30008644","pn":"BOX1:TG000","sn":"MLC0013","intv":24,"cert":"25M1501(TPA)","cal":"2025-08-06","due":"2027-08-06"},{"cat":"Force","desc":"WEIGHT TESTER 10 KGS","eq":"30008645","pn":"BOX2:TG000","sn":"MLC0014","intv":24,"cert":"25M1502(TPA)","cal":"2025-08-06","due":"2027-08-06"},{"cat":"Force","desc":"WEIGHT TESTER 20 KGS","eq":"30008646","pn":"BOX3:TG000","sn":"MYS0148","intv":24,"cert":"24M1818(TPA)","cal":"2024-09-19","due":"2026-09-19"},{"cat":"Force","desc":"WEIGHTS 1MG-10KG","eq":"30008104","pn":"SET323-09F1:TG000","sn":"982","intv":24,"cert":"25M1687(TPA)","cal":"2025-09-01","due":"2027-09-01"},{"cat":"Force","desc":"PRECISION FORCE DISPLAY","eq":"30008555","pn":"DMP40S2:TG000","sn":"DMP40S2","intv":24,"cert":"-","cal":"2025-05-21","due":"2027-05-21"},{"cat":"Force","desc":"TOP TRANSFER 2 KN","eq":"30037380","pn":"TOP-Z30A/2KN:TG000","sn":"131030162","intv":24,"cert":"MFT-0111-25(NIMT)","cal":"2025-05-21","due":"2027-05-21"},{"cat":"Force","desc":"TOP TRANSFER 10 KN","eq":"30008319","pn":"TOP-Z30/10KN:TG000","sn":"'093530096","intv":24,"cert":"MFT-0108-25(NIMT)","cal":"2025-05-15","due":"2027-05-15"},{"cat":"Force","desc":"TOP TRANSFER 50 KN","eq":"30008320","pn":"TOP-Z4A/50KN:TG000","sn":"092130063","intv":24,"cert":"MFT-0109-25(NIMT)","cal":"2025-05-16","due":"2027-05-16"},{"cat":"Force","desc":"TOP TRANSFER 100 KN","eq":"30008321","pn":"TOP-Z4A/100KN:TG000","sn":"092530014","intv":24,"cert":"MFT-0110-25(NIMT)","cal":"2025-05-16","due":"2027-05-16"},{"cat":"Force","desc":"TOP TRANSFER 500 KN","eq":"30008322","pn":"TOP-Z4A/500KN:TG000","sn":"091930057","intv":24,"cert":"MFT-0112-25(NIMT)","cal":"2025-05-20","due":"2027-05-20"},{"cat":"Force","desc":"DISPLAY OF INTERFACE","eq":"30043188","pn":"9840","sn":"50038","intv":24,"cert":"440111978","cal":"2025-03-25","due":"2027-03-25"},{"cat":"Force","desc":"LOAD CELL 2000 LBF","eq":"30008314","pn":"1610ARC-2K","sn":"128528","intv":24,"cert":"440112593","cal":"2025-03-11","due":"2027-03-11"},{"cat":"Force","desc":"LOAD CELL 5000 LBF","eq":"30008290","pn":"1610ARC-5K","sn":"98463","intv":24,"cert":"440111976","cal":"2025-03-13","due":"2027-03-13"},{"cat":"Force","desc":"LOAD CELL 25000 LBF","eq":"30008291","pn":"1620ARC-25K","sn":"98439","intv":24,"cert":"440112596","cal":"2025-03-20","due":"2027-03-20"},{"cat":"Force","desc":"LOAD CELL 100000 LBF","eq":"30008292","pn":"1632BHX-100K","sn":"97323","intv":24,"cert":"440112597","cal":"2025-03-25","due":"2027-03-25"},{"cat":"Force","desc":"Automated Calibration Press","eq":"30040837","pn":"MD8060-00000-2:06433","sn":"541436","intv":12,"cert":"440114708","cal":"2026-01-08","due":"2027-01-08"},{"cat":"Force","desc":"Load Cell","eq":"30047690","pn":"FN2420-A1:TG000","sn":"X162JN","intv":12,"cert":"440112905","cal":"2025-05-02","due":"2026-05-02"},{"cat":"Pressure","desc":"Piston cylinder assembly/Ruska","eq":"30008192","pn":"2465-727","sn":"C-229","intv":60,"cert":"MP-0011-22","cal":"2022-01-26","due":"2027-01-26"},{"cat":"Pressure","desc":"Piston cylinder assembly/Ruska","eq":"30008187","pn":"2465-729","sn":"V-895","intv":60,"cert":"MP-0012-22","cal":"2022-01-27","due":"2027-01-27"},{"cat":"Pressure","desc":"Piston cylinder assembly/DH","eq":"30008193","pn":"400631","sn":"4023","intv":60,"cert":"MP-0013-22","cal":"2022-02-10","due":"2027-02-10"},{"cat":"Pressure","desc":"Piston cylinder assembly/DH","eq":"30008195","pn":"400873","sn":"8414","intv":60,"cert":"MP-0014-22","cal":"2022-02-08","due":"2027-02-08"},{"cat":"Pressure","desc":"Pressure transducer 1 torr/MKS","eq":"30008396","pn":"690A01TRA","sn":"95088222A","intv":24,"cert":"MP-0223-23","cal":"2023-11-09","due":"2025-11-09"},{"cat":"Pressure","desc":"Pressure transducer 10 torr/MKS","eq":"30008394","pn":"690A11TRA","sn":"95096401A","intv":24,"cert":"MP-0224-23","cal":"2023-11-08","due":"2025-11-08"},{"cat":"Pressure","desc":"Pressure transducer 100 torr/MKS","eq":"30008395","pn":"690A12TRA","sn":"95124110A","intv":24,"cert":"MP-0225-23","cal":"2023-11-07","due":"2025-11-07"},{"cat":"Pressure","desc":"AIR DATA TEST SYSTEM","eq":"30008402","pn":"ADTS405","sn":"A/1012/00-06","intv":12,"cert":"440113692","cal":"2025-09-01","due":"2026-09-01"},{"cat":"Pressure","desc":"AIR DATA TEST SYSTEM","eq":"30008404","pn":"ADTS405","sn":"40501295","intv":12,"cert":"440112763","cal":"2025-02-25","due":"2026-02-25"},{"cat":"Pressure","desc":"Hasting Vacuum Gauge","eq":"30008382","pn":"VT-6B","sn":"1266","intv":12,"cert":"440114143","cal":"2025-10-28","due":"2026-10-28"},{"cat":"Pressure","desc":"Pressure Controller/Calibrator","eq":"30008409","pn":"PPC3-7M A7MPA700KP","sn":"291","intv":12,"cert":"440112521","cal":"2025-03-18","due":"2026-03-18"},{"cat":"Pressure","desc":"Portable Hydraulic Calibartor","eq":"30008407","pn":"DPI610","sn":"610/5209","intv":12,"cert":"440114670","cal":"2026-01-26","due":"2026-01-27"},{"cat":"Pressure","desc":"Hydraulic  Pressure Gauge Calibrator","eq":"30021869","pn":"HGC-30000-AF","sn":"1503/242","intv":12,"cert":"440114144","cal":"2025-11-19","due":"2026-11-19"},{"cat":"Pressure","desc":"Automated  Pressure Calibrator","eq":"30032541","pn":"CPC6000:14178","sn":"610810","intv":12,"cert":"440113791","cal":"2025-09-19","due":"2026-09-19"},{"cat":"Pressure","desc":"Pressure Calibration System","eq":"30021868","pn":"PCS400","sn":"181257","intv":12,"cert":"440113485","cal":"2025-07-30","due":"2026-07-30"},{"cat":"Pressure","desc":"Vacuum Measurement Package","eq":"30052765","pn":"DV-5R:W1973","sn":"1468893001","intv":12,"cert":"440114345","cal":"2025-11-05","due":"2026-11-05"},{"cat":"Pressure","desc":"Automated High Pressure Calibrator","eq":"30037404","pn":"CPC8000-D:14185","sn":"Z80574C","intv":12,"cert":"440114756","cal":"2026-01-14","due":"2027-01-14"},{"cat":"Pressure","desc":"High-End-Mensor Pressure Controller","eq":"30053421","pn":"CPC8000:WTG00","sn":"41001Z02","intv":12,"cert":"269822(mensor)","cal":"2025-07-30","due":"2026-07-30"},{"cat":"Mass","desc":"WEIGHTS 1MG-10KG","eq":"30008104","pn":"SET323-09F1:TG000","sn":"982","intv":24,"cert":"","cal":"2025-09-01","due":"2027-09-01"},{"cat":"Mass","desc":"REFERENCE STANDARD WEIGHT OIML E2","eq":"30008108","pn":"158521:TG000","sn":"6151001007","intv":24,"cert":"","cal":"2024-09-25","due":"2026-09-25"},{"cat":"Mass","desc":"WEIGHT 20KG CLASS F1","eq":"30008289","pn":"YCW723-00:TG000","sn":"80131198","intv":24,"cert":"","cal":"2024-11-09","due":"2026-11-09"},{"cat":"Mass","desc":"WEIGHT SET 10KG","eq":"30008639","pn":"136:TG000","sn":"136","intv":48,"cert":"","cal":"2022-10-19","due":"2026-10-19"},{"cat":"Mass","desc":"WEIGHT SET 1MG - 50G","eq":"30008640","pn":"ME73336:TG000","sn":"283","intv":48,"cert":"","cal":"2022-10-20","due":"2026-10-20"},{"cat":"Mass","desc":"WEIGHT SET 100G - 5KG","eq":"30008641","pn":"ME73338:TG000","sn":"089","intv":48,"cert":"","cal":"2022-10-19","due":"2026-10-19"},{"cat":"Mass","desc":"WEIGHT 10 KG","eq":"30008643","pn":"ME700755:TG000","sn":"136-1","intv":24,"cert":"","cal":"2024-10-29","due":"2026-10-29"},{"cat":"Mass","desc":"WEIGHT TESTER 1-2-5KGS","eq":"30008644","pn":"BOX1:TG000","sn":"MLC0013","intv":24,"cert":"","cal":"2025-08-06","due":"2027-08-06"},{"cat":"Mass","desc":"WEIGHT TESTER 10 KGS","eq":"30008645","pn":"BOX2:TG000","sn":"MLC0014","intv":24,"cert":"","cal":"2025-08-06","due":"2027-08-06"},{"cat":"Mass","desc":"WEIGHT TESTER 20 KGS","eq":"30008646","pn":"BOX3:TG000","sn":"MYS0148","intv":24,"cert":"","cal":"2024-09-19","due":"2026-09-19"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008109","pn":"SLOTTED:TG000","sn":"1008","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008110","pn":"SLOTTED:TG000","sn":"1009","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008111","pn":"SLOTTED:TG000","sn":"1010","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008112","pn":"SLOTTED:TG000","sn":"1011","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008113","pn":"SLOTTED:TG000","sn":"1012","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008114","pn":"SLOTTED:TG000","sn":"1013","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008115","pn":"SLOTTED:TG000","sn":"1014","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008116","pn":"SLOTTED:TG000","sn":"1015","intv":24,"cert":"","cal":"2025-02-07","due":"2027-02-07"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008117","pn":"SLOTTED:TG000","sn":"1016","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008118","pn":"SLOTTED:TG000","sn":"1017","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008119","pn":"SLOTTED:TG000","sn":"1018","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008120","pn":"SLOTTED:TG000","sn":"1019","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008121","pn":"SLOTTED:TG000","sn":"1020","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008122","pn":"SLOTTED:TG000","sn":"1021","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008123","pn":"SLOTTED:TG000","sn":"1022","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008124","pn":"SLOTTED:TG000","sn":"1023","intv":24,"cert":"","cal":"2025-02-13","due":"2027-02-13"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008125","pn":"SLOTTED:TG000","sn":"1024","intv":24,"cert":"","cal":"2025-02-19","due":"2027-02-19"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008126","pn":"SLOTTED:TG000","sn":"1025","intv":24,"cert":"","cal":"2025-02-19","due":"2027-02-19"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008127","pn":"SLOTTED:TG000","sn":"1026","intv":24,"cert":"","cal":"2025-02-19","due":"2027-02-19"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008128","pn":"SLOTTED:TG000","sn":"1027","intv":24,"cert":"","cal":"2025-02-19","due":"2027-02-19"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008129","pn":"SLOTTED:TG000","sn":"1028","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008130","pn":"SLOTTED:TG000","sn":"1029","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008131","pn":"SLOTTED:TG000","sn":"1030","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008132","pn":"SLOTTED:TG000","sn":"1031","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008133","pn":"SLOTTED:TG000","sn":"1032","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008134","pn":"SLOTTED:TG000","sn":"1033","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008135","pn":"SLOTTED:TG000","sn":"1034","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008136","pn":"SLOTTED:TG000","sn":"1035","intv":24,"cert":"","cal":"2025-02-25","due":"2027-02-25"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008137","pn":"SLOTTED:TG000","sn":"1036","intv":24,"cert":"","cal":"2025-03-04","due":"2027-03-04"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008138","pn":"SLOTTED:TG000","sn":"1037","intv":24,"cert":"","cal":"2025-03-04","due":"2027-03-04"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008139","pn":"SLOTTED:TG000","sn":"1038","intv":24,"cert":"","cal":"2025-03-04","due":"2027-03-04"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008140","pn":"SLOTTED:TG000","sn":"1039","intv":24,"cert":"","cal":"2025-03-04","due":"2027-03-04"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008141","pn":"SLOTTED:TG000","sn":"1040","intv":24,"cert":"","cal":"2025-03-05","due":"2027-03-05"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008142","pn":"SLOTTED:TG000","sn":"1041","intv":24,"cert":"","cal":"2025-03-05","due":"2027-03-05"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008143","pn":"SLOTTED:TG000","sn":"1042","intv":24,"cert":"","cal":"2025-03-05","due":"2027-03-05"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008144","pn":"SLOTTED:TG000","sn":"1043","intv":24,"cert":"","cal":"2025-03-05","due":"2027-03-05"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008145","pn":"SLOTTED:TG000","sn":"1044","intv":24,"cert":"","cal":"2025-03-12","due":"2027-03-12"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008146","pn":"SLOTTED:TG000","sn":"1045","intv":24,"cert":"","cal":"2025-03-12","due":"2027-03-12"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008147","pn":"SLOTTED:TG000","sn":"1046","intv":24,"cert":"","cal":"2025-03-12","due":"2027-03-12"},{"cat":"Mass","desc":"SLOTTED WEIGHTS","eq":"30008148","pn":"SLOTTED:TG000","sn":"1047","intv":24,"cert":"","cal":"2025-03-12","due":"2027-03-12"}];
+const SEED = [];
 
 const STAGES = [
   {k:'monitor', th:'เฝ้าติดตาม',      en:'Monitor STD'},
@@ -584,6 +641,26 @@ const LEADSTEPS=[
   {k:'verify',th:'ตรวจสอบใบรับรอง'}
 ];
 const DEFLEAD={rs:7,po:45,pack:3,send:5,cal:30,recv:5,verify:5};
+// สถานะการใช้งานของเครื่องมือ ตาม ISO/IEC 17025 ข้อ 6.4.9
+const LIFES=[
+  {k:'active',   th:'ใช้งาน',              cls:'t-ok',   d:'นับใน KPI และแจ้งเตือนตามปกติ'},
+  {k:'suspended',th:'ระงับใช้ชั่วคราว',    cls:'t-warn', d:'ชำรุดหรือผลตรวจไม่ผ่าน ยังอยู่ในทะเบียนแต่ไม่นับเป็นเกินกำหนด'},
+  {k:'retired',  th:'ปลดระวาง',            cls:'t-soon', d:'เลิกใช้ถาวร ไม่นับใน KPI ไม่แจ้งเตือน แต่ยังดูประวัติได้'}
+];
+const lifeOf = s => (s.life||'active');
+const isLive = s => lifeOf(s)==='active';
+// สาเหตุความล่าช้า เก็บเพื่อวิเคราะห์ผลนำร่อง
+const DELAYS=[
+  {k:'approve', th:'รออนุมัติภายใน'},
+  {k:'budget',  th:'งบประมาณไม่พร้อม'},
+  {k:'vendor',  th:'ผู้รับจ้างคิวเต็มหรือล่าช้า'},
+  {k:'doc',     th:'เอกสารไม่ครบหรือต้องแก้ไข'},
+  {k:'ship',    th:'ปัญหาการขนส่งหรือพิธีการ'},
+  {k:'staff',   th:'ผู้รับผิดชอบไม่ว่างหรือตกหล่น'},
+  {k:'other',   th:'อื่นๆ ระบุในหมายเหตุ'}
+];
+// ขั้นตอนปลายทาง -> ช่องเวลานำที่ใช้เทียบ
+const STAGE2LEAD={rs:'rs',po:'po',pack:'pack',send:'send',recv:'cal',verify:'recv',done:'verify'};
 const DEFSET={to:'',buffer:30,hook:'',lead:{'_default':{...DEFLEAD}},icEvery:{'_default':6},daily:{on:false,time:'08:00',quiet:true,lastSent:''}};
 const MONTHS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 let db, charts={};
@@ -629,7 +706,7 @@ function load(){
   db.settings.daily=Object.assign({on:false,time:'08:00',quiet:true,lastSent:''},db.settings.daily||{});
   db.settings.icEvery=db.settings.icEvery||{'_default':6};
   if(!db.settings.icEvery._default) db.settings.icEvery._default=6;
-  db.jobs=db.jobs||[]; db.log=db.log||[];
+  db.jobs=db.jobs||[]; db.log=db.log||[]; db.acks=db.acks||[];
 }
 function save(note){
   if(note){ db.log.unshift({t:new Date().toISOString(),m:note}); db.log=db.log.slice(0,300); }
@@ -667,6 +744,7 @@ function shiftDays(dateStr,days){
 }
 function startBy(s){ return shiftDays(s.due,-leadDays(s.cat)); }
 function planStatus(s){
+  if(!isLive(s)){ const L=LIFES.find(x=>x.k===lifeOf(s)); return {k:lifeOf(s),th:L.th,cls:L.cls}; }
   const n=daysLeft(s.due);
   if(n===null) return {k:'none',th:'ไม่ระบุวันครบกำหนด',cls:'t-soon'};
   const L=leadDays(s.cat), B=Number(db.settings.buffer)||0, has=!!jobFor(s.id);
@@ -727,25 +805,31 @@ $$('nav button').forEach(b=>b.onclick=()=>{
    ============================================================ */
 function counts(){
   const c={late:0,warn:0,soon:0,ok:0,none:0};
-  db.stds.forEach(s=>c[statusOf(s).k]++);
+  db.stds.filter(isLive).forEach(s=>c[statusOf(s).k]++);
+  return c;
+}
+function liveStds(){ return db.stds.filter(isLive); }
+function lifeCounts(){
+  const c={active:0,suspended:0,retired:0};
+  db.stds.forEach(s=>c[lifeOf(s)]++);
   return c;
 }
 function renderHeader(){
-  const c=counts(), tot=db.stds.length;
+  const c=counts(), tot=liveStds().length;
   const ready=tot?Math.round((tot-c.late)/tot*100):0;
   $('#hdStats').innerHTML=
-    pill(tot,'เครื่องมือทั้งหมด')+pill(c.late,'เกินกำหนด')+
+    pill(tot,'เครื่องมือที่ใช้งาน')+pill(c.late,'เกินกำหนด')+
     pill(c.warn,'ครบใน 30 วัน')+pill(openJobs().length,'งานในสายงาน')+pill(ready+'%','ความพร้อมใช้');
 }
 const pill=(v,l)=>'<div class="hd-pill"><b>'+v+'</b><span>'+l+'</span></div>';
 
 function renderDash(){
-  const c=counts(), tot=db.stds.length;
+  const c=counts(), tot=liveStds().length, lc=lifeCounts();
   const rate=tot? Number(((tot-c.late)/tot*100).toFixed(1)) : 0;
   const jobs=openJobs();
   const stuck=jobs.filter(j=>Math.round((today()-new Date(j.created))/864e5)>45).length;
   const pc={actLate:0,prep:0};
-  db.stds.forEach(s=>{const p=planStatus(s);
+  liveStds().forEach(s=>{const p=planStatus(s);
     if(p.k==='act'&&!jobFor(s.id)) pc.actLate++;
     if(p.k==='prep') pc.prep++;});
   const fails=icFails(); const missed=icMissedAll(new Date().getFullYear());
@@ -760,6 +844,9 @@ function renderDash(){
     kpi('งานอยู่ระหว่างดำเนินการ',jobs.length,
         stuck? stuck+' งานค้างเกิน 45 วัน' : (jobs.length?'ทุกงานอยู่ในกรอบเวลา':'ไม่มีงานค้างในสายงาน'),
         stuck?'k-warn':'k-ok'),
+    kpi('ระงับใช้และปลดระวาง',(lc.suspended+lc.retired),
+        lc.suspended? 'ระงับใช้ '+lc.suspended+' · ปลดระวาง '+lc.retired : (lc.retired?'ปลดระวาง '+lc.retired+' รายการ':'ทุกรายการอยู่ในสถานะใช้งาน'),
+        lc.suspended?'k-warn':'k-ok'),
     kpi('ผลตรวจระหว่างรอบไม่ผ่าน',fails.length,
         fails.length?'ต้องพิจารณาส่งสอบเทียบก่อนครบรอบ':(missed.length?'ค้างบันทึกผลอีก '+missed.length+' เดือน':'บันทึกผลครบตามแผน'),
         fails.length?'k-late':(missed.length?'k-warn':'k-ok'))
@@ -778,14 +865,25 @@ function renderDash(){
   // by category stacked
   const cs=cats();
   drawStack('chCat',cs,[
-    {label:'เกินกำหนด',data:cs.map(x=>db.stds.filter(s=>s.cat===x&&statusOf(s).k==='late').length),backgroundColor:'#e53935'},
-    {label:'ใกล้ครบ 30 วัน',data:cs.map(x=>db.stds.filter(s=>s.cat===x&&statusOf(s).k==='warn').length),backgroundColor:'#ffb300'},
-    {label:'ปกติ',data:cs.map(x=>db.stds.filter(s=>s.cat===x&&['ok','soon','none'].includes(statusOf(s).k)).length),backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--thai-purple').trim()}
+    {label:'เกินกำหนด',data:cs.map(x=>liveStds().filter(s=>s.cat===x&&statusOf(s).k==='late').length),backgroundColor:'#e53935'},
+    {label:'ใกล้ครบ 30 วัน',data:cs.map(x=>liveStds().filter(s=>s.cat===x&&statusOf(s).k==='warn').length),backgroundColor:'#ffb300'},
+    {label:'ปกติ',data:cs.map(x=>liveStds().filter(s=>s.cat===x&&['ok','soon','none'].includes(statusOf(s).k)).length),backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--thai-purple').trim()}
   ]);
 
   // stage
   const sl=STAGES.filter(s=>s.k!=='done');
-  drawBar('chStage',sl.map(s=>s.th),sl.map(s=>jobs.filter(j=>j.stage===s.k).length),sl.map(()=>getComputedStyle(document.documentElement).getPropertyValue('--thai-magenta').trim()),true);
+  const SCJ=['--c-violet','--c-coral','--c-orange','--c-amber','--c-lime','--c-mint','--c-cyan','--c-sky'];
+  const cv=getComputedStyle(document.documentElement);
+  const stageCounts=sl.map(s=>jobs.filter(j=>j.stage===s.k).length);
+  drawBar('chStage',
+    sl.map((s,i)=>String(i+1).padStart(2,'0')+'  '+s.en),
+    stageCounts,
+    sl.map((_,i)=>cv.getPropertyValue(SCJ[i]).trim()),
+    true);
+  const total=stageCounts.reduce((a,b)=>a+b,0);
+  $('#stageNote').innerHTML = total
+    ? 'ตัวเลขคือ<b>จำนวนงานที่ค้างอยู่ในขั้นตอนนั้น ณ ขณะนี้</b> รวม '+total+' งาน · ขั้นตอนที่แท่งยาวที่สุดคือคอขวดของสายงาน'
+    : 'ตัวเลขคือ<b>จำนวนงานที่ค้างอยู่ในขั้นตอนนั้น ณ ขณะนี้</b> · ตอนนี้ยังไม่มีงานเปิดอยู่ในสายงาน จึงเป็นศูนย์ทุกขั้นตอน';
 
   // aging
   const buckets=[['0–15 วัน',0,15],['16–30 วัน',16,30],['31–45 วัน',31,45],['เกิน 45 วัน',46,9999]];
@@ -796,12 +894,41 @@ function renderDash(){
   }).join('')+'</table>'
   : '<div class="empty"><b>ยังไม่มีงานในสายงาน</b>เปิดงานได้ที่แท็บ สายงานส่งสอบเทียบ</div>';
 
+  // สาเหตุความล่าช้า
+  const ds=delayStats(), dk=Object.keys(ds).sort((a,b)=>ds[b].days-ds[a].days);
+  const totOver=dk.reduce((a,k)=>a+ds[k].days,0);
+  $('#delayBox').innerHTML = dk.length
+    ? '<table><thead><tr><th>สาเหตุ</th><th style="text-align:right">ครั้ง</th><th style="text-align:right">วันที่เสียไป</th><th>สัดส่วน</th></tr></thead><tbody>'+
+      dk.map(k=>{const d=ds[k], w=totOver?Math.round(d.days/totOver*100):0;
+        const top=Object.keys(d.stages).sort((a,b)=>d.stages[b]-d.stages[a])[0];
+        return '<tr><td>'+esc(DELAYS.find(x=>x.k===k).th)+
+          (top?'<br><span class="muted" style="font-size:11.5px">พบมากที่ขั้น '+esc(top)+'</span>':'')+
+          '</td><td class="mono" style="text-align:right">'+d.n+'</td>'+
+          '<td class="mono" style="text-align:right;color:var(--late);font-weight:600">'+d.days+'</td>'+
+          '<td style="width:120px"><div style="background:var(--panel);border-radius:5px;height:15px"><div style="width:'+w+'%;height:15px;border-radius:5px;background:var(--c-orange)"></div></div>'+
+          '<span class="muted" style="font-size:11px">'+w+'%</span></td></tr>';
+      }).join('')+'</tbody></table>'+
+      '<p class="muted" style="margin:10px 0 0">รวมเสียเวลาไป '+totOver+' วันจากแผนที่ตั้งไว้ · ใช้ตัวเลขนี้สรุปผลนำร่องและเจรจากับหน่วยงานที่เกี่ยวข้อง</p>'
+    : '<div class="empty"><b>ยังไม่มีข้อมูลความล่าช้า</b>เมื่อเลื่อนขั้นตอนที่ใช้เวลาเกินแผน ระบบจะให้เลือกสาเหตุแล้วสรุปมาแสดงที่นี่</div>';
+
+  // การรับทราบการแจ้งเตือน
+  renderAck();
+
   // urgent list
-  const list=[...db.stds].filter(s=>validDate(s.due)).sort((a,b)=>(startBy(a)||'9')<(startBy(b)||'9')?-1:1).slice(0,10);
+  const list=liveStds().filter(s=>validDate(s.due)).sort((a,b)=>(startBy(a)||'9')<(startBy(b)||'9')?-1:1).slice(0,10);
   $('#urgentTbl').innerHTML='<thead><tr><th>เครื่องมือ</th><th>EQ</th><th>กลุ่ม</th><th>ต้องเริ่มงานภายใน</th><th>ครบกำหนด</th><th>สถานะแผนงาน</th><th>ขั้นตอนปัจจุบัน</th></tr></thead><tbody>'+
-    list.map(s=>{const st=planStatus(s),j=jobFor(s.id);
-      return '<tr><td>'+esc(s.desc)+'</td><td class="mono">'+esc(s.eq)+'</td><td>'+esc(s.cat)+'</td><td class="mono">'+fmt(startBy(s))+'</td><td class="mono">'+fmt(s.due)+
-      '</td><td><span class="tag '+st.cls+'">'+st.th+'</span></td><td>'+(j?esc(STAGES.find(x=>x.k===j.stage).th):'<span class="muted">ยังไม่เปิดงาน</span>')+'</td></tr>';
+    list.map(s=>{
+      const st=planStatus(s), j=jobFor(s.id), now=today().toISOString().slice(0,10);
+      const sb=startBy(s), dd=s.due;
+      // เลยวันที่ต้องเริ่มงานแล้ว หรือเลยวันครบกำหนดแล้ว ให้ขึ้นสีแดง
+      const sbLate = sb && sb < now, ddLate = dd && dd < now;
+      const cell=(v,late)=>'<td class="mono"'+(late?' style="color:var(--late);font-weight:700"':'')+'>'+fmt(v)+
+        (late?' <span style="font-size:10.5px;font-weight:600">เลยแล้ว</span>':'')+'</td>';
+      const stLate = st.k==='late' || (st.k==='act' && !j);
+      return '<tr><td>'+esc(s.desc)+'</td><td class="mono">'+esc(s.eq)+'</td><td>'+esc(s.cat)+'</td>'+
+        cell(sb,sbLate)+cell(dd,ddLate)+
+        '<td><span class="tag '+st.cls+'"'+(stLate?' style="color:var(--late);font-weight:700"':'')+'>'+st.th+'</span></td>'+
+        '<td>'+(j?esc(STAGES.find(x=>x.k===j.stage).th):'<span style="color:var(--late);font-weight:600">ยังไม่เปิดงาน</span>')+'</td></tr>';
     }).join('')+'</tbody>';
 }
 let heatMode='start';
@@ -815,8 +942,8 @@ function renderHeat(){
   }
   const key=s=>heatMode==='start'? startBy(s) : s.due;
   const grid=cs.map(cat=>months.map(m=>
-    db.stds.filter(s=>s.cat===cat && (key(s)||'').slice(0,7)===m.k).length));
-  const overdue=cs.map(cat=>db.stds.filter(s=>{
+    liveStds().filter(s=>s.cat===cat && (key(s)||'').slice(0,7)===m.k).length));
+  const overdue=cs.map(cat=>liveStds().filter(s=>{
     const v=key(s); return v && v<base.toISOString().slice(0,10) && s.cat===cat;
   }).length);
   const peak=Math.max(1,...grid.flat());
@@ -912,6 +1039,38 @@ $('#btnAutoJob').onclick=()=>{
   render('pipe'); renderHeader(); toast('เปิดงานอัตโนมัติ '+due.length+' รายการ');
 };
 
+// จำนวนวันที่ใช้ไปในขั้นปัจจุบัน นับจากครั้งล่าสุดที่เลื่อนขั้น
+function stageElapsed(j,to){
+  const last=j.history[j.history.length-1];
+  const a=validDate(last.d), b=validDate(to||new Date().toISOString().slice(0,10));
+  return (a&&b)? Math.round((b-a)/864e5) : 0;
+}
+function stagePlanned(s,nxt){
+  const k=STAGE2LEAD[nxt.k];
+  return k? (Number(leadSet(s.cat)[k])||0) : 0;
+}
+function stageDelayBox(j,s,nxt){
+  const el=stageElapsed(j), pl=stagePlanned(s,nxt);
+  if(!pl || el<=pl) return '';
+  return '<div style="margin-top:12px;padding:11px 13px;border-left:4px solid var(--late);'+
+    'background:rgba(229,57,53,.10);border-radius:0 9px 9px 0">'+
+    '<label class="f" style="color:var(--late)">ขั้นตอนนี้ใช้เวลา '+el+' วัน จากแผน '+pl+' วัน · เกินมา '+(el-pl)+' วัน</label>'+
+    '<select id="jdelay"><option value="">— เลือกสาเหตุความล่าช้า —</option>'+
+    DELAYS.map(x=>'<option value="'+x.k+'">'+esc(x.th)+'</option>').join('')+'</select>'+
+    '<p class="muted" style="margin:7px 0 0;font-size:12px">ข้อมูลนี้ใช้สรุปผลนำร่องว่าความล่าช้าเกิดจากอะไรมากที่สุด</p></div>';
+}
+function delayStats(){
+  const map={};
+  db.jobs.forEach(j=>j.history.forEach(hh=>{
+    if(!hh.delay) return;
+    const st=STAGES.find(x=>x.k===hh.s);
+    map[hh.delay]=map[hh.delay]||{n:0,days:0,stages:{}};
+    map[hh.delay].n++;
+    map[hh.delay].days+=Math.max(0,(hh.days||0)-(hh.plan||0));
+    if(st) map[hh.delay].stages[st.th]=(map[hh.delay].stages[st.th]||0)+1;
+  }));
+  return map;
+}
 function jobModal(jid){
   const j=db.jobs.find(x=>x.id===jid); if(!j) return;
   const s=stdById(j.stdId); const idx=STAGES.findIndex(x=>x.k===j.stage);
@@ -920,16 +1079,25 @@ function jobModal(jid){
     '<div class="row" style="margin-bottom:14px"><div style="flex:1"><label class="f">เครื่องมือ</label><div><b>'+esc(s.desc)+'</b><br><span class="mono muted">EQ '+esc(s.eq)+' · S/N '+esc(s.sn)+'</span></div></div>'+
     '<div style="flex:1"><label class="f">ครบกำหนดเดิม</label><div class="mono">'+fmt(s.due)+' · รอบ '+esc(s.intv)+' เดือน</div></div></div>'+
     '<label class="f">ผู้รับจ้างสอบเทียบ</label><input type="text" id="jv" value="'+esc(j.vendor)+'">'+
-    (nxt?'<div style="margin-top:14px;padding:14px;background:#faf7fb;border-radius:11px;border:1px solid var(--line)">'+
+    (nxt?'<div style="margin-top:14px;padding:14px;background:var(--panel);border-radius:11px;border:1px solid var(--thai-purple)">'+
       '<label class="f">ขั้นตอนถัดไป — '+nxt.th+' ('+nxt.en+')</label>'+
       (nxt.k==='done'
         ? '<div class="row"><div style="flex:1"><label class="f">วันที่สอบเทียบใหม่</label><input type="date" id="jcal" value="'+new Date().toISOString().slice(0,10)+'"></div>'+
           '<div style="flex:1"><label class="f">เลขที่ใบรับรอง</label><input type="text" id="jcert" value="'+esc(s.cert)+'"></div></div>'
         : '<input type="text" id="jnote" placeholder="บันทึกย่อ เช่น เลขที่ RS / PO / เลขพัสดุ">')+
+      stageDelayBox(j,s,nxt)+
       '<button class="btn" id="jadv" style="margin-top:10px">ยืนยันเข้าสู่ขั้นตอน '+nxt.th+'</button></div>'
      :'')+
     '<label class="f" style="margin-top:16px">ประวัติการดำเนินงาน</label><ul class="steps">'+
-      j.history.slice().reverse().map(h=>'<li><span class="dt">'+fmt(h.d)+'</span><span><b>'+STAGES.find(x=>x.k===h.s).th+'</b>'+(h.note?' — '+esc(h.note):'')+'</span></li>').join('')+'</ul>';
+      j.history.slice().reverse().map(hh=>{
+      const dl=hh.delay? DELAYS.find(x=>x.k===hh.delay) : null;
+      const over=(hh.plan&&hh.days>hh.plan)? hh.days-hh.plan : 0;
+      return '<li><span class="dt">'+fmt(hh.d)+'</span><span><b>'+STAGES.find(x=>x.k===hh.s).th+'</b>'+
+        (hh.days!=null&&hh.plan? ' <span class="muted">· '+hh.days+'/'+hh.plan+' วัน</span>':'')+
+        (over? ' <span style="color:var(--late);font-weight:600">เกิน '+over+' วัน</span>':'')+
+        (dl? '<br><span style="color:var(--c-amber);font-size:12px">สาเหตุ: '+esc(dl.th)+'</span>':'')+
+        (hh.note?'<br><span class="muted">'+esc(hh.note)+'</span>':'')+'</span></li>';
+    }).join('')+'</ul>';
   modal('งานสอบเทียบ '+esc(s.eq),html,
     '<button class="btn ghost" data-del style="color:var(--late)">ยกเลิกงาน</button><button class="btn ghost" data-x>ปิด</button>');
   const jv=$('#jv'); if(jv) jv.onchange=()=>{ j.vendor=jv.value; save(); };
@@ -937,13 +1105,18 @@ function jobModal(jid){
   if(adv) adv.onclick=()=>{
     const d=new Date().toISOString().slice(0,10);
     let note=$('#jnote')?$('#jnote').value.trim():'';
+    const dl=$('#jdelay');
+    if(dl && !dl.value) return toast('ขั้นตอนนี้ใช้เวลาเกินแผน กรุณาเลือกสาเหตุก่อน');
     if(nxt.k==='done'){
       const cal=$('#jcal').value, cert=$('#jcert').value.trim();
       if(!cal) return toast('กรุณาระบุวันที่สอบเทียบ');
       s.cal=cal; s.cert=cert; s.due=addMonths(cal,s.intv);
       note='ใบรับรอง '+(cert||'—')+' · ครบกำหนดถัดไป '+fmt(s.due);
     }
-    j.stage=nxt.k; j.history.push({s:nxt.k,d,note});
+    const el=stageElapsed(j,d), pl=stagePlanned(s,nxt);
+    const rec={s:nxt.k,d,note,days:el,plan:pl};
+    if(dl && dl.value) rec.delay=dl.value;
+    j.stage=nxt.k; j.history.push(rec);
     save((nxt.k==='done'?'ปิดงาน ':'เลื่อนขั้นตอนเป็น '+nxt.th+' — ')+s.desc+' (EQ '+s.eq+')');
     closeModal(); render('pipe'); renderHeader(); toast(nxt.k==='done'?'ปิดงานและอัปเดตวันครบกำหนดแล้ว':'อัปเดตเป็น '+nxt.th);
   };
@@ -986,8 +1159,9 @@ function stageCell(s){
     '<span class="n'+(slow?'" style="color:var(--late);font-weight:600':'')+'">'+esc(STAGES[i].th)+'</span></span>';
 }
 function renderReg(){
-  const q=$('#q').value.trim().toLowerCase(), fc=$('#fCat').value, fs=$('#fSt').value, fg=$('#fStg').value;
+  const q=$('#q').value.trim().toLowerCase(), fc=$('#fCat').value, fs=$('#fSt').value, fg=$('#fStg').value, fl=$('#fLife').value;
   const rows=db.stds.filter(s=>{
+    if(fl && lifeOf(s)!==fl) return false;
     if(fc&&s.cat!==fc) return false;
     if(fs&&planStatus(s).k!==fs) return false;
     if(fg){
@@ -1000,15 +1174,21 @@ function renderReg(){
     return [s.desc,s.eq,s.pn,s.sn,s.cert].join(' ').toLowerCase().includes(q);
   }).sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1);
   $('#regTbl').innerHTML='<thead><tr><th>เครื่องมือ</th><th>กลุ่ม</th><th>EQ</th><th>P/N</th><th>S/N</th><th>รอบ</th><th>สอบเทียบล่าสุด</th><th>เริ่มงานภายใน</th><th>ครบกำหนด</th><th>สถานะแผนงาน</th><th>ขั้นตอนปัจจุบัน</th><th></th></tr></thead><tbody>'+
-    (rows.length?rows.map(s=>{const st=planStatus(s);
-      return '<tr><td>'+esc(s.desc)+'</td><td>'+esc(s.cat)+'</td><td class="mono">'+esc(s.eq)+'</td><td class="mono">'+esc(s.pn)+
-      '</td><td class="mono">'+esc(s.sn)+'</td><td class="mono">'+esc(s.intv)+' ด.</td><td class="mono">'+fmt(s.cal)+'</td><td class="mono">'+fmt(startBy(s))+'</td><td class="mono">'+fmt(s.due)+
-      '</td><td><span class="tag '+st.cls+'">'+st.th+'</span></td><td>'+stageCell(s)+'</td><td><button class="btn ghost sm" data-ed="'+s.id+'">แก้ไข</button></td></tr>';
+    (rows.length?rows.map(s=>{
+      const st=planStatus(s), now=today().toISOString().slice(0,10);
+      const sb=startBy(s), dd=s.due;
+      const dcell=(v,late)=>'<td class="mono'+(late?' od':'')+'">'+fmt(v)+(late?'<small>เลยแล้ว</small>':'')+'</td>';
+      const L=LIFES.find(x=>x.k===lifeOf(s));
+      return '<tr'+(isLive(s)?'':' style="opacity:.72"')+'><td>'+esc(s.desc)+
+      (isLive(s)?'':' <span class="tag '+L.cls+'" style="font-size:10px">'+L.th+'</span>')+'</td><td>'+esc(s.cat)+'</td><td class="mono">'+esc(s.eq)+'</td><td class="mono">'+esc(s.pn)+
+      '</td><td class="mono">'+esc(s.sn)+'</td><td class="mono">'+esc(s.intv)+' ด.</td><td class="mono">'+fmt(s.cal)+'</td>'+
+      dcell(sb, !!(sb && sb<now)) + dcell(dd, !!(dd && dd<now)) +
+      '<td><span class="tag '+st.cls+'">'+st.th+'</span></td><td>'+stageCell(s)+'</td><td><button class="btn ghost sm" data-ed="'+s.id+'">แก้ไข</button></td></tr>';
     }).join(''):'<tr><td colspan="13"><div class="empty"><b>ไม่พบรายการที่ตรงกับเงื่อนไข</b>ลองล้างคำค้นหรือเปลี่ยนตัวกรอง</div></td></tr>')+'</tbody>';
   $('#regCount').textContent='แสดง '+rows.length+' จาก '+db.stds.length+' รายการ';
   $$('#regTbl [data-ed]').forEach(b=>b.onclick=()=>editStd(b.dataset.ed));
 }
-['#q','#fCat','#fSt','#fStg'].forEach(s=>$(s).addEventListener('input',renderReg));
+['#q','#fCat','#fSt','#fStg','#fLife'].forEach(s=>$(s).addEventListener('input',renderReg));
 
 function editStd(id){
   const s=id?stdById(id):{id:'',cat:cats()[0]||'',desc:'',eq:'',pn:'',sn:'',intv:24,cert:'',cal:'',due:'',ic:Array(12).fill(0)};
@@ -1019,6 +1199,7 @@ function editStd(id){
     '<div class="row" style="margin-top:10px">'+f('รอบสอบเทียบ (เดือน)','intv','number')+f('เลขที่ใบรับรอง','cert')+'</div>'+
     '<div class="row" style="margin-top:10px">'+f('วันที่สอบเทียบ','cal','date')+f('วันครบกำหนด','due','date')+'</div>'+
     '<p class="muted" style="margin:10px 0 0">ปล่อยวันครบกำหนดว่างไว้ ระบบจะคำนวณจากวันที่สอบเทียบบวกรอบให้</p>',
+    (id?'<button class="btn ghost" data-life>เปลี่ยนสถานะการใช้งาน</button>':'')+
     (id?'<button class="btn ghost" data-rm style="color:var(--late)">ลบ</button>':'')+
     '<button class="btn ghost" data-x>ยกเลิก</button><button class="btn" data-ok>บันทึก</button>');
   $$('#modal [data-ok]').forEach(b=>b.onclick=()=>{
@@ -1031,10 +1212,66 @@ function editStd(id){
     else { o.id='S'+Date.now(); db.stds.push(o); save('เพิ่มเครื่องมือ '+o.desc); }
     closeModal(); fillCatSelects(); render('reg'); renderHeader(); toast('บันทึกแล้ว');
   });
+  $$('#modal [data-life]').forEach(b=>b.onclick=()=>{ closeModal(); lifeModal(id); });
   $$('#modal [data-rm]').forEach(b=>b.onclick=()=>{
-    if(!confirm('ลบเครื่องมือนี้ออกจากทะเบียน?')) return;
-    db.stds=db.stds.filter(x=>x.id!==id); db.jobs=db.jobs.filter(j=>j.stdId!==id);
+    // ลบได้เฉพาะรายการที่ยังไม่มีประวัติใดๆ คือกรณีกรอกผิดเท่านั้น
+    const hasJob=db.jobs.some(j=>j.stdId===id);
+    const hasIC=Object.keys(s.icLog||{}).length>0;
+    const hasLife=(s.lifeLog||[]).length>0;
+    if(hasJob||hasIC||hasLife){
+      modal('ลบไม่ได้',
+        '<p style="margin-top:0">เครื่องมือนี้มีประวัติในระบบแล้ว จึงลบไม่ได้ เพื่อรักษาร่องรอยการสอบเทียบตาม ISO/IEC 17025</p>'+
+        '<ul style="padding-left:20px;line-height:1.8">'+
+        (hasJob?'<li>มีประวัติงานส่งสอบเทียบ</li>':'')+
+        (hasIC?'<li>มีผลตรวจระหว่างรอบที่บันทึกไว้</li>':'')+
+        (hasLife?'<li>มีประวัติการเปลี่ยนสถานะการใช้งาน</li>':'')+
+        '</ul><p>หากเลิกใช้เครื่องมือนี้แล้ว ให้เปลี่ยนสถานะเป็น ปลดระวาง แทน ซึ่งจะไม่นับใน KPI และไม่แจ้งเตือน แต่ยังดูประวัติย้อนหลังได้</p>',
+        '<button class="btn ghost" data-x>ปิด</button><button class="btn" data-go>ไปหน้าเปลี่ยนสถานะ</button>');
+      $$('#modal [data-go]').forEach(b2=>b2.onclick=()=>{ closeModal(); lifeModal(id); });
+      return;
+    }
+    if(!confirm('ลบเครื่องมือนี้ออกจากทะเบียน? รายการนี้ยังไม่มีประวัติใดๆ')) return;
+    db.stds=db.stds.filter(x=>x.id!==id);
     save('ลบเครื่องมือ EQ '+s.eq); closeModal(); render('reg'); renderHeader();
+  });
+}
+// เปลี่ยนสถานะการใช้งาน พร้อมบันทึกเหตุผลเป็นประวัติที่แก้ย้อนหลังไม่ได้
+function lifeModal(id){
+  const s=stdById(id); if(!s) return;
+  const cur=lifeOf(s);
+  const html=
+    '<div class="info" style="margin-bottom:14px"><dl>'+
+    '<dt>เครื่องมือ</dt><dd><b>'+esc(s.desc)+'</b></dd>'+
+    '<dt>EQ / Serial</dt><dd class="mono">'+esc(s.eq)+' / '+esc(s.sn||'—')+'</dd>'+
+    '<dt>สถานะปัจจุบัน</dt><dd><span class="tag '+LIFES.find(x=>x.k===cur).cls+'">'+LIFES.find(x=>x.k===cur).th+'</span></dd>'+
+    '</dl></div>'+
+    '<label class="f">เปลี่ยนเป็น</label>'+
+    LIFES.map(L=>'<label style="display:flex;gap:9px;align-items:flex-start;padding:9px 11px;margin-bottom:7px;'+
+      'border:1px solid '+(L.k===cur?'var(--thai-purple)':'var(--line)')+';border-radius:10px;cursor:pointer;background:var(--panel)">'+
+      '<input type="radio" name="lf" value="'+L.k+'"'+(L.k===cur?' checked':'')+' style="width:auto;margin-top:3px">'+
+      '<span><b>'+L.th+'</b><br><span class="muted" style="font-size:12px">'+L.d+'</span></span></label>').join('')+
+    '<label class="f" style="margin-top:12px">เหตุผล (จำเป็น)</label>'+
+    '<textarea id="lfWhy" rows="2" placeholder="เช่น ผลตรวจระหว่างรอบไม่ผ่าน รอส่งซ่อม / จำหน่ายออกตามมติที่ประชุม"></textarea>'+
+    '<label class="f" style="margin-top:10px">ผู้ดำเนินการ (จำเป็น)</label>'+
+    '<input type="text" id="lfBy" placeholder="ชื่อผู้บันทึก">'+
+    ((s.lifeLog||[]).length? '<label class="f" style="margin-top:16px">ประวัติการเปลี่ยนสถานะ</label><ul class="steps">'+
+      s.lifeLog.slice().reverse().map(l=>'<li><span class="dt">'+fmt(l.d)+'</span><span><b>'+
+        (LIFES.find(x=>x.k===l.to)||{th:l.to}).th+'</b> โดย '+esc(l.by)+'<br><span class="muted">'+esc(l.why)+'</span></span></li>').join('')+'</ul>' : '');
+  modal('สถานะการใช้งานเครื่องมือ',html,
+    '<button class="btn ghost" data-x>ยกเลิก</button><button class="btn" data-ok2>บันทึก</button>');
+  $$('#modal [data-ok2]').forEach(b=>b.onclick=()=>{
+    const to=(document.querySelector('#modal input[name=lf]:checked')||{}).value;
+    const why=$('#lfWhy').value.trim(), by=$('#lfBy').value.trim();
+    if(!to) return toast('กรุณาเลือกสถานะ');
+    if(to===cur) return toast('สถานะไม่เปลี่ยนแปลง');
+    if(!why) return toast('กรุณาระบุเหตุผล');
+    if(!by) return toast('กรุณาระบุชื่อผู้ดำเนินการ');
+    s.lifeLog=s.lifeLog||[];
+    s.lifeLog.push({d:new Date().toISOString().slice(0,10),from:cur,to,why,by});
+    s.life=to;
+    if(to!=='active'){ const j=jobFor(s.id); if(j){ db.jobs=db.jobs.filter(x=>x.id!==j.id); } }
+    save('เปลี่ยนสถานะ '+s.eq+' เป็น '+LIFES.find(x=>x.k===to).th+' โดย '+by+' — '+why);
+    closeModal(); fillCatSelects(); render('reg'); renderHeader(); toast('บันทึกแล้ว');
   });
 }
 $('#btnAdd').onclick=()=>editStd(null);
@@ -1043,7 +1280,7 @@ $('#btnAdd').onclick=()=>editStd(null);
 function siteBase(){
   const u=(db.settings.siteUrl||'').trim();
   if(u) return u.replace(/[?#].*$/,'');
-  if(location.protocol==='file:') return '';
+  if(!/^https?:$/.test(location.protocol)) return '';   // file:, about:, blob: ใช้เป็นฐาน QR ไม่ได้
   return location.href.split('?')[0];
 }
 function qrPayload(s){
@@ -1069,6 +1306,7 @@ function stdInfoModal(s){
    '<dt>สอบเทียบล่าสุด</dt><dd class="mono">'+fmt(s.cal)+'  ·  รอบ '+esc(s.intv)+' เดือน</dd>'+
    '<dt>ครบกำหนด</dt><dd class="mono">'+fmt(s.due)+'</dd>'+
    '<dt>ต้องเริ่มงานภายใน</dt><dd class="mono">'+fmt(startBy(s))+'</dd>'+
+   '<dt>สถานะการใช้งาน</dt><dd><span class="tag '+LIFES.find(x=>x.k===lifeOf(s)).cls+'">'+LIFES.find(x=>x.k===lifeOf(s)).th+'</span></dd>'+
    '<dt>สถานะแผนงาน</dt><dd><span class="tag '+ps.cls+'">'+ps.th+'</span></dd>'+
    '<dt>ขั้นตอนปัจจุบัน</dt><dd>'+(j?esc(STAGES.find(x=>x.k===j.stage).th):'ยังไม่เปิดงาน')+'</dd>'+
    '<dt>ใบรับรอง</dt><dd class="mono">'+esc(s.cert||'—')+'</dd>'+
@@ -1091,7 +1329,7 @@ let qrCam=null;
 function stopScan(){ if(qrCam){ try{qrCam.stop().then(()=>qrCam.clear()).catch(()=>{});}catch(e){} qrCam=null; } }
 $('#btnScan').onclick=()=>{
   if(typeof Html5Qrcode==='undefined') return toast('ต้องต่ออินเทอร์เน็ตเพื่อใช้กล้องสแกน');
-  if(location.protocol==='file:') return toast('กล้องใช้ได้เฉพาะเมื่อเปิดผ่าน https เท่านั้น ให้อัปโหลดขึ้นเว็บก่อน');
+  if(location.protocol!=='https:') return toast('กล้องใช้ได้เฉพาะเมื่อเปิดผ่าน https เท่านั้น ให้อัปโหลดขึ้นเว็บก่อน');
   modal('สแกน QR ที่ป้ายเครื่องมือ',
     '<div id="qrReader"></div><p class="muted" style="text-align:center;margin:12px 0 0">หันกล้องไปที่ป้าย ระบบจะเปิดข้อมูลให้ทันที</p>',
     '<button class="btn ghost" data-x>ปิดกล้อง</button>');
@@ -1129,13 +1367,29 @@ $('#btnLabels').onclick=()=>{
   setTimeout(()=>{ window.print(); }, 400);
 };
 $('#btnXlsx').onclick=()=>{
-  const rows=db.stds.map((s,i)=>({'Item':i+1,'Description':s.desc,'Group':s.cat,'EQ':s.eq,'Part No.':s.pn,'Serial No.':s.sn,
+  const rows=db.stds.map((s,i)=>({'Item':i+1,'Life Status':(LIFES.find(x=>x.k===lifeOf(s))||{}).th,'Description':s.desc,'Group':s.cat,'EQ':s.eq,'Part No.':s.pn,'Serial No.':s.sn,
     'Interval (M)':s.intv,'Order or Cert. No.':s.cert,'Cal Date':s.cal,'Due Date':s.due,
     'Days Left':daysLeft(s.due),'Start By':startBy(s),'Lead (days)':leadDays(s.cat),'Plan Status':planStatus(s).th,
     'IC Fail':Object.values(s.icLog||{}).filter(r=>r.res==='fail').length,
     'Stage':(jobFor(s.id)?String(STAGES.findIndex(x=>x.k===jobFor(s.id).stage)+1).padStart(2,'0')+' '+STAGES.find(x=>x.k===jobFor(s.id).stage).th:'ยังไม่เปิดงาน')}));
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'STD List');
+  // ชีตวิเคราะห์สาเหตุความล่าช้า สำหรับสรุปผลนำร่อง
+  const ds2=delayStats();
+  const drows=Object.keys(ds2).map(k=>({'สาเหตุ':DELAYS.find(x=>x.k===k).th,'จำนวนครั้ง':ds2[k].n,
+    'วันที่เกินแผนรวม':ds2[k].days,
+    'ขั้นตอนที่พบมากสุด':Object.keys(ds2[k].stages).sort((a,b)=>ds2[k].stages[b]-ds2[k].stages[a])[0]||''}));
+  if(drows.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(drows),'Delay Analysis');
+  const hrows=[];
+  db.jobs.forEach(j=>{ const st=stdById(j.stdId); if(!st) return;
+    j.history.forEach(hh=>hrows.push({'EQ':st.eq,'Description':st.desc,'Group':st.cat,
+      'Stage':(STAGES.find(x=>x.k===hh.s)||{}).en||'','Date':hh.d,'Days Used':hh.days==null?'':hh.days,
+      'Days Planned':hh.plan==null?'':hh.plan,
+      'Delay Reason':hh.delay?(DELAYS.find(x=>x.k===hh.delay)||{}).th:'','Note':hh.note||''}));
+  });
+  if(hrows.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(hrows),'Job History');
+  if(db.acks&&db.acks.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(
+    db.acks.map(a=>({'วันที่':a.date,'เวลา':a.time,'ผู้รับทราบ':a.by,'รายการค้างขณะนั้น':a.n}))),'Acknowledgement');
   XLSX.writeFile(wb,'LAB_STD_Status_'+new Date().toISOString().slice(0,10)+'.xlsx');
 };
 
@@ -1178,7 +1432,7 @@ function icFails(){
 }
 function icMissedAll(y){
   const out=[];
-  db.stds.forEach(s=>icPlan(s).forEach((v,i)=>{ if(icMissed(s,y,i)) out.push({s,i}); }));
+  liveStds().forEach(s=>icPlan(s).forEach((v,i)=>{ if(icMissed(s,y,i)) out.push({s,i}); }));
   return out;
 }
 function renderIC(){
@@ -1283,9 +1537,9 @@ $('#btnSaveMail').onclick=()=>{
 };
 function buildMail(){
   db.settings.buffer=Number($('#mBuf').value)||0;
-  const late=db.stds.filter(s=>planStatus(s).k==='late').sort((a,b)=>a.due<b.due?-1:1);
-  const act =db.stds.filter(s=>planStatus(s).k==='act'&&!jobFor(s.id)).sort((a,b)=>startBy(a)<startBy(b)?-1:1);
-  const prep=db.stds.filter(s=>planStatus(s).k==='prep').sort((a,b)=>startBy(a)<startBy(b)?-1:1);
+  const late=liveStds().filter(s=>planStatus(s).k==='late').sort((a,b)=>a.due<b.due?-1:1);
+  const act =liveStds().filter(s=>planStatus(s).k==='act'&&!jobFor(s.id)).sort((a,b)=>startBy(a)<startBy(b)?-1:1);
+  const prep=liveStds().filter(s=>planStatus(s).k==='prep').sort((a,b)=>startBy(a)<startBy(b)?-1:1);
   const jobs=openJobs();
   const fails=icFails(), missIC=icMissedAll(new Date().getFullYear());
   const line=s=>'  • '+s.desc+' | EQ '+s.eq+' | ครบกำหนด '+fmt(s.due)+' | ต้องเริ่มงานภายใน '+fmt(startBy(s))+' (เวลานำ '+leadDays(s.cat)+' วัน)';
@@ -1307,6 +1561,7 @@ function buildMail(){
 '[6] ค้างบันทึกผลตรวจระหว่างรอบ — '+missIC.length+' เดือน-เครื่องมือ\n'+
 (missIC.length?missIC.slice(0,20).map(m=>'  • '+m.s.desc+' | EQ '+m.s.eq+' | แผนเดือน '+MONTHS[m.i]).join('\n'):'  ไม่มี')+'\n\n'+
 '──────────────────────────────────────────\n'+
+'เมื่อตรวจสอบแล้ว กรุณากดปุ่ม รับทราบ ในหน้าภาพรวมของระบบ เพื่อบันทึกเป็นหลักฐานการติดตาม\n'+
 'ข้อความนี้สร้างจากระบบ LA-B STD Calibration Tracker\n';
   $('#mSub').value='[LA-B] แจ้งเตือนสอบเทียบ: เกินกำหนด '+late.length+' / เลยจุดเริ่มงาน '+act.length+' / เตรียม RS '+prep.length+(fails.length?' / IC ไม่ผ่าน '+fails.length:'');
   $('#mBody').value=body;
@@ -1353,7 +1608,10 @@ function dgUrl(){
 function syncDg(){ $('#dgUrl').value=dgUrl(); }
 ['#dgQuiet','#dgClose'].forEach(s=>$(s).addEventListener('change',syncDg));
 $('#btnDgCopy').onclick=()=>{ navigator.clipboard.writeText(dgUrl()).then(()=>toast('คัดลอกลิงก์แล้ว')); };
-$('#btnDgTest').onclick=()=>{ window.open(dgUrl(),'_blank'); };
+$('#btnDgTest').onclick=()=>{
+  if(!$('#mTo').value.trim()) return toast('กรุณากรอกอีเมลผู้รับและกดบันทึกการตั้งค่าก่อนทดสอบ');
+  window.open(dgUrl(),'_blank');
+};
 $('#btnDgHow').onclick=()=>{
   const isFile=location.protocol==='file:';
   modal('ตั้งให้รายงานมาเองทุกเช้า',
@@ -1452,7 +1710,7 @@ $('#btnReset').onclick=()=>{
 function renderSite(){
   const cur=(db.settings.siteUrl||'').trim();
   $('#siteUrl').value=cur;
-  const auto=location.protocol==='file:'? '' : location.href.split('?')[0];
+  const auto=/^https?:$/.test(location.protocol)? location.href.split('?')[0] : '';
   const used=cur||auto;
   const demo=used? used+'?eq=30008294' : 'EQ:30008294';
   $('#siteState').innerHTML = used
@@ -1461,7 +1719,7 @@ function renderSite(){
     : '<b style="color:var(--warn)">ยังไม่ได้ตั้งที่อยู่</b> ตอนนี้เปิดจากไฟล์ในเครื่อง QR จะเก็บแค่รหัส <span class="mono">EQ:30008294</span> ซึ่งสแกนได้เฉพาะในโปรแกรมนี้ สแกนด้วยกล้องมือถือทั่วไปจะไม่เปิดอะไร';
 }
 $('#btnSiteAuto').onclick=()=>{
-  if(location.protocol==='file:') return toast('ตอนนี้เปิดจากไฟล์ในเครื่อง ยังไม่มีที่อยู่เว็บให้ใช้');
+  if(!/^https?:$/.test(location.protocol)) return toast('ตอนนี้ยังไม่ได้เปิดผ่านเว็บ จึงไม่มีที่อยู่ให้ใช้');
   $('#siteUrl').value=location.href.split('?')[0]; toast('ใส่ที่อยู่ปัจจุบันแล้ว กดบันทึกเพื่อยืนยัน');
 };
 $('#btnSiteSave').onclick=()=>{
@@ -1577,6 +1835,31 @@ const DOCS=[
 <li>ระบบแจ้งจำนวนที่นำเข้าสำเร็จแยกตามกลุ่ม พร้อมข้ามรายการที่ EQ และ Serial No. ซ้ำโดยอัตโนมัติ</li></ol>
 <p>ช่อง ชื่อกลุ่มสำรอง ใช้เฉพาะเมื่อชื่อชีตไม่ใช่ชื่อกลุ่ม เช่นไฟล์เดิมที่ชีตชื่อ IC Plan 2025 หรือ Sheet1 ระบบจะใช้ค่าในช่องนี้แทน ถ้าเว้นว่างจะใช้ชื่อไฟล์ การนำเข้าซ้ำไฟล์เดิมไม่ทำให้ข้อมูลซ้อน</p>`},
 
+{id:'dl',t:'3.5 สถานะการใช้งานของเครื่องมือ',h:`
+<h2>สถานะการใช้งานของเครื่องมือ</h2>
+<p>เครื่องมือมาตรฐานไม่ได้อยู่ในทะเบียนตลอดไป เมื่อชำรุด ให้ผลนอกเกณฑ์ หรือเลิกใช้ ต้องแยกออกจากรายการที่ใช้งานจริง มิฉะนั้นตัวเลขความพร้อมใช้จะผิด และขัดกับ ISO/IEC 17025 ข้อ 6.4.9 ที่กำหนดให้นำเครื่องมือที่ชำรุดออกจากการใช้งานอย่างชัดเจน</p>
+<table><thead><tr><th>สถานะ</th><th>ใช้เมื่อ</th><th>ผลต่อระบบ</th></tr></thead><tbody>
+<tr><td><b>ใช้งาน</b></td><td>สภาพปกติ ใช้อ้างอิงในการสอบเทียบได้</td><td>นับใน KPI ทุกตัว แจ้งเตือนตามปกติ</td></tr>
+<tr><td><b>ระงับใช้ชั่วคราว</b></td><td>ชำรุด ผลตรวจระหว่างรอบไม่ผ่าน หรือรอตัดสินใจ</td><td>ไม่นับเป็นเกินกำหนด ไม่แจ้งเตือน แต่ยังอยู่ในทะเบียน และแสดงเป็นตัวเลขเตือนบนหน้าภาพรวม</td></tr>
+<tr><td><b>ปลดระวาง</b></td><td>เลิกใช้ถาวร จำหน่ายออก หรือเปลี่ยนทดแทนแล้ว</td><td>ไม่นับใน KPI ไม่แจ้งเตือน ซ่อนจากรายการหลัก แต่ค้นเจอและดูประวัติได้ครบ</td></tr>
+</tbody></table>
+
+<h3>วิธีเปลี่ยนสถานะ</h3>
+<ol><li>ไปที่แท็บ <kbd>ทะเบียน STD</kbd> กดปุ่ม แก้ไข ที่เครื่องมือที่ต้องการ</li>
+<li>กดปุ่ม เปลี่ยนสถานะการใช้งาน</li>
+<li>เลือกสถานะใหม่ ระบุเหตุผล และชื่อผู้ดำเนินการ ทั้งสองช่องเป็นช่องบังคับ</li>
+<li>กดปุ่ม บันทึก</li></ol>
+<p>เมื่อเปลี่ยนเป็น ระงับใช้ชั่วคราว หรือ ปลดระวาง งานส่งสอบเทียบที่เปิดค้างอยู่ของเครื่องมือนั้นจะถูกปิดโดยอัตโนมัติ เนื่องจากไม่มีเหตุให้ดำเนินการต่อ</p>
+<div class="note"><b>ประวัติแก้ย้อนหลังไม่ได้</b> ทุกครั้งที่เปลี่ยนสถานะ ระบบบันทึกวันที่ สถานะเดิม สถานะใหม่ เหตุผล และชื่อผู้ดำเนินการไว้ถาวร ดูได้ในหน้าต่างเปลี่ยนสถานะ ใช้เป็นหลักฐานประกอบการตรวจประเมินได้</div>
+
+<h3>การดูรายการตามสถานะ</h3>
+<p>แท็บ ทะเบียน STD มีตัวกรอง สถานะการใช้งาน ค่าเริ่มต้นคือแสดงเฉพาะรายการที่ใช้งาน เพื่อไม่ให้รายการที่ปลดระวางแล้วมารบกวนการทำงานประจำวัน เลือก ทั้งหมด เมื่อต้องการดูรวมทุกสถานะ</p>
+<p>รายการที่ไม่ได้ใช้งานจะแสดงแบบจางลงพร้อมป้ายกำกับสถานะต่อท้ายชื่อ ทำให้แยกออกจากรายการปกติได้ทันที</p>
+
+<h3>การลบกับการปลดระวาง</h3>
+<p>ปุ่มลบใช้ได้เฉพาะรายการที่ยังไม่มีประวัติใดๆ ในระบบ คือกรณีกรอกข้อมูลผิดแล้วต้องการลบทิ้ง หากเครื่องมือมีประวัติงานส่งสอบเทียบ ผลตรวจระหว่างรอบ หรือประวัติการเปลี่ยนสถานะแล้ว ระบบจะไม่ยอมให้ลบ และแนะนำให้ใช้การปลดระวางแทน</p>
+<div class="note"><b>เหตุผล</b> การลบทำให้ประวัติการสอบเทียบหายไปทั้งหมด ซึ่งเป็นบันทึกคุณภาพที่ต้องเก็บรักษา การปลดระวางให้ผลเหมือนกันในแง่การใช้งานประจำวัน คือไม่นับใน KPI และไม่แจ้งเตือน แต่ยังตรวจสอบย้อนหลังได้</div>`},
+
 {id:'d4',t:'4. ตั้งเวลานำของสายงาน',h:`
 <h2>ตั้งเวลานำของสายงาน</h2>
 <p>เวลานำคือจำนวนวันที่แต่ละขั้นใช้จริง ตั้งแต่ออกใบขอซื้อจนได้ใบรับรองกลับ ระบบนำค่านี้คำนวณย้อนกลับจากวันครบกำหนด เพื่อบอกว่าต้องเริ่มดำเนินการวันไหน จุดแจ้งเตือนทั้งระบบขยับตามค่านี้ ไม่ใช่ตัวเลขตายตัว</p>
@@ -1620,6 +1903,43 @@ const DOCS=[
 <li>กดปุ่มยืนยันเข้าสู่ขั้นถัดไป ระบบบันทึกวันที่และประวัติอัตโนมัติ</li></ol>
 <div class="note"><b>เมื่อปิดงาน</b> ขั้นสุดท้ายต้องกรอกวันที่สอบเทียบใหม่และเลขที่ใบรับรอง ระบบคำนวณวันครบกำหนดรอบถัดไปจากรอบสอบเทียบให้เอง และบันทึกลงทะเบียนทันที</div>
 <p>การ์ดที่เปิดงานเกิน 45 วันจะเปลี่ยนเป็นแถบสีแดง เพื่อให้เห็นงานค้างนานผิดปกติ</p>`},
+
+{id:'dd',t:'5B. สาเหตุความล่าช้าและการรับทราบ',h:`
+<h2>สาเหตุความล่าช้าและการรับทราบ</h2>
+<p>สองส่วนนี้เพิ่มเข้ามาเพื่อให้ระยะนำร่องมีข้อสรุปเชิงตัวเลข ไม่ใช่เพียงความรู้สึกว่าระบบดีขึ้นหรือไม่</p>
+
+<h3>การบันทึกสาเหตุความล่าช้า</h3>
+<p>เมื่อเลื่อนขั้นตอนที่ใช้เวลาเกินเวลานำที่ตั้งไว้ ระบบจะขึ้นกรอบสีแดงบอกว่าใช้เวลาไปกี่วันจากแผนกี่วัน และบังคับให้เลือกสาเหตุก่อนจึงจะเลื่อนขั้นได้</p>
+<table><thead><tr><th>สาเหตุ</th><th>ใช้เมื่อ</th></tr></thead><tbody>
+<tr><td>รออนุมัติภายใน</td><td>เอกสารค้างที่ผู้มีอำนาจลงนาม</td></tr>
+<tr><td>งบประมาณไม่พร้อม</td><td>ต้องรอรอบงบหรือขออนุมัติเพิ่ม</td></tr>
+<tr><td>ผู้รับจ้างคิวเต็มหรือล่าช้า</td><td>ความล่าช้าอยู่ที่ผู้รับจ้างสอบเทียบ</td></tr>
+<tr><td>เอกสารไม่ครบหรือต้องแก้ไข</td><td>ต้องส่งกลับไปแก้ไขก่อนดำเนินการต่อ</td></tr>
+<tr><td>ปัญหาการขนส่งหรือพิธีการ</td><td>ของค้างระหว่างทางหรือติดพิธีการ</td></tr>
+<tr><td>ผู้รับผิดชอบไม่ว่างหรือตกหล่น</td><td>ไม่มีใครดำเนินการต่อในช่วงเวลานั้น</td></tr>
+<tr><td>อื่นๆ</td><td>กรณีที่ไม่ตรงกับข้อใด ให้อธิบายในช่องบันทึกย่อ</td></tr>
+</tbody></table>
+<p>เลือกเพียงสาเหตุหลักหนึ่งข้อ หากมีหลายสาเหตุให้เลือกข้อที่ทำให้เสียเวลามากที่สุด แล้วอธิบายเพิ่มในบันทึกย่อ</p>
+<div class="note"><b>ทำไมต้องบังคับเลือก</b> หากปล่อยให้ข้ามได้ จะไม่มีใครเลือก และเมื่อจบระยะนำร่องจะสรุปได้เพียงว่างานช้า แต่บอกไม่ได้ว่าช้าเพราะอะไร ซึ่งไม่พอสำหรับเสนอผู้บริหาร</div>
+
+<h3>การอ่านผลวิเคราะห์</h3>
+<p>หน้าภาพรวมมีพาเนล สาเหตุความล่าช้า แสดงสาเหตุเรียงตามจำนวนวันที่เสียไป พร้อมจำนวนครั้ง สัดส่วน และขั้นตอนที่พบสาเหตุนั้นมากที่สุด</p>
+<p>ตัวเลขที่ควรนำไปใช้คือจำนวนวันที่เสียไป ไม่ใช่จำนวนครั้ง เพราะสาเหตุที่เกิดไม่บ่อยแต่ทำให้เสียเวลาครั้งละมาก มีผลต่อกำหนดการมากกว่าสาเหตุที่เกิดบ่อยแต่เสียเวลาน้อย</p>
+<p>ข้อมูลนี้ส่งออกได้ในไฟล์ Excel ที่ชีต Delay Analysis และ Job History ซึ่งมีรายการทุกครั้งที่เลื่อนขั้นตอนพร้อมเวลาที่ใช้จริงเทียบกับแผน</p>
+
+<h3>การรับทราบการแจ้งเตือน</h3>
+<p>การส่งอีเมลแจ้งเตือนพิสูจน์ได้เพียงว่าระบบส่งออกไป แต่พิสูจน์ไม่ได้ว่ามีคนอ่านและดำเนินการ พาเนล การรับทราบการแจ้งเตือน บนหน้าภาพรวมจึงให้ผู้รับผิดชอบกดยืนยันทุกวัน</p>
+<ol><li>เปิดหน้าภาพรวมผู้บริหาร</li>
+<li>ที่พาเนลการรับทราบ กรอกชื่อผู้รับทราบ</li>
+<li>กดปุ่ม รับทราบ</li></ol>
+<p>ระบบบันทึกวันที่ เวลา ชื่อผู้รับทราบ และจำนวนรายการที่ค้างอยู่ ณ ขณะนั้น กดได้วันละครั้ง ประวัติย้อนหลังแสดงอยู่ใต้พาเนลและส่งออกได้ในไฟล์ Excel ที่ชีต Acknowledgement</p>
+<div class="note"><b>เหตุผลสองข้อ</b> ในแง่ข้อกำหนด ผู้ตรวจประเมินมักถามว่าทราบได้อย่างไรว่าคำเตือนถึงมือผู้รับผิดชอบ บันทึกนี้คือคำตอบ ในแง่การประเมินผลนำร่อง จำนวนวันที่มีการรับทราบเทียบกับวันทำการทั้งหมด คือหลักฐานว่าระบบถูกใช้จริงหรือเปิดทิ้งไว้เฉยๆ</div>
+
+<h3>สิ่งที่ควรเก็บไว้ใช้ตอนสรุปผล</h3>
+<ul><li>จำนวนเครื่องมือที่เกินกำหนด เปรียบเทียบต้นระยะกับปลายระยะ</li>
+<li>เวลานำจริงของแต่ละขั้น เทียบกับค่าที่ตั้งไว้ตอนเริ่ม</li>
+<li>สาเหตุความล่าช้าอันดับต้น พร้อมจำนวนวันที่เสียไป</li>
+<li>สัดส่วนวันที่มีการรับทราบ เทียบกับวันทำการทั้งหมด</li></ul>`},
 
 {id:'d6',t:'6. แผนตรวจระหว่างรอบ',h:`
 <h2>แผนตรวจระหว่างรอบ</h2>
@@ -1696,6 +2016,81 @@ const DOCS=[
 <ol><li>กดปุ่ม กู้คืนจากไฟล์สำรอง แล้วเลือกไฟล์ .json</li>
 <li>ระบบแทนที่ข้อมูลเดิมทั้งหมดด้วยข้อมูลในไฟล์ ไม่ใช่การรวมข้อมูล</li></ol>
 <div class="note"><b>ข้อควรระวัง</b> การกู้คืนทับข้อมูลปัจจุบันทั้งหมด หากข้อมูลปัจจุบันมีรายการใหม่ที่ยังไม่ได้สำรอง ให้ดาวน์โหลดไฟล์สำรองของปัจจุบันก่อนกู้คืน</div>`},
+
+{id:'dv',t:'8.5 การใช้งานร่วมกันหลายคน',h:`
+<h2>การใช้งานร่วมกันหลายคน</h2>
+<p>ระบบเก็บข้อมูลไว้ในเบราว์เซอร์ของเครื่องที่ใช้งาน จึงไม่ซิงก์ข้ามเครื่องโดยธรรมชาติ ในระยะนำร่องใช้วิธีแยกไฟล์เป็นสองฉบับ</p>
+<table><thead><tr><th>ฉบับ</th><th>ใครใช้</th><th>ทำอะไรได้</th></tr></thead><tbody>
+<tr><td><b>ฉบับบันทึกข้อมูล</b><br>LAB_STD_Calibration_Tracker.html</td><td>ผู้วางแผน บนเครื่องหลักเครื่องเดียว</td><td>ทุกอย่าง</td></tr>
+<tr><td><b>ฉบับดูอย่างเดียว</b><br>LAB_STD_Tracker_ViewOnly.html</td><td>หัวหน้าแผนก ผู้บริหาร ผู้ตรวจสอบ</td><td>ดูอย่างเดียว พิมพ์ป้าย ส่งออก Excel</td></tr>
+</tbody></table>
+<div class="note"><b>ฉบับดูอย่างเดียวไม่ได้ซ่อนปุ่มไว้เฉยๆ</b> ฟังก์ชันบันทึก แก้ไข ลบ และนำเข้าถูกถอดออกจากไฟล์จริง และไม่มีคำสั่งเขียนข้อมูลลงเครื่องเลย จึงไม่มีทางแก้ข้อมูลจากฉบับนี้ได้แม้จะเปิดดูโค้ด</div>
+<h3>วิธีวางระบบ</h3>
+<ol><li>เก็บฉบับบันทึกข้อมูลไว้บนเครื่องหลักเครื่องเดียว ไม่ต้องแชร์</li>
+<li>ทุกสิ้นวันทำการ ผู้วางแผนกดดาวน์โหลดไฟล์สำรอง แล้ววางไฟล์ .json บนไดรฟ์ของแผนก ใช้ชื่อไฟล์เดิมทับทุกครั้งเพื่อให้คนอื่นหาถูก</li>
+<li>วางฉบับดูอย่างเดียวไว้บนไดรฟ์เดียวกัน</li></ol>
+<h3>วิธีใช้ฉบับดูอย่างเดียว</h3>
+<ol><li>เปิดไฟล์ LAB_STD_Tracker_ViewOnly.html</li>
+<li>ไปที่แท็บ ข้อมูลและตั้งค่า กดปุ่ม เลือกไฟล์ข้อมูล แล้วเลือกไฟล์ .json ล่าสุดจากไดรฟ์ของแผนก</li>
+<li>ดูข้อมูลได้ทุกแท็บตามปกติ</li></ol>
+<p>ฉบับนี้ไม่จำข้อมูลไว้ในเครื่อง ต้องเลือกไฟล์ใหม่ทุกครั้งที่เปิด ซึ่งเป็นข้อดี เพราะรับประกันว่าข้อมูลที่เห็นมาจากไฟล์ที่เลือก ไม่ใช่ของเก่าค้างในเครื่อง แถบด้านล่างจะบอกว่ากำลังดูไฟล์ไหนและแก้ไขล่าสุดเมื่อใด</p>
+<h3>ข้อจำกัดที่ต้องยอมรับ</h3>
+<ul><li>ข้อมูลที่ผู้ดูเห็นเป็นข้อมูล ณ เวลาที่สำรองไว้ ไม่ใช่ปัจจุบัน</li>
+<li>การแยกไฟล์เป็นการป้องกันการแก้ไขโดยไม่ตั้งใจ ไม่ใช่ระบบควบคุมการเข้าถึงตามข้อกำหนด ISO/IEC 17025 ข้อ 7.11 ใครที่เข้าถึงไดรฟ์ได้ก็เปิดดูข้อมูลได้ทั้งหมด</li>
+<li>ไม่ควรระบุในเอกสารระบบคุณภาพว่าวิธีนี้เป็นการควบคุมการเข้าถึง</li></ul>
+<div class="note"><b>ทางออกระยะยาว</b> การใช้งานร่วมกันจริงพร้อมสิทธิ์ผู้ใช้ ประวัติการแก้ไข และการสำรองอัตโนมัติ ต้องย้ายข้อมูลไปไว้บน SharePoint หรือ Microsoft 365 ขององค์กร ซึ่งควรทำพร้อมกับตอนรวมระบบเข้ากับ SCALM ดูบทที่ 10</div>`},
+
+{id:'di',t:'8.6 รูปแบบการติดตั้ง',h:`
+<h2>รูปแบบการติดตั้ง</h2>
+<p>เลือกได้สามแบบตามจำนวนผู้ใช้และความพร้อมขององค์กร ทั้งสามแบบใช้ไฟล์โปรแกรมชุดเดียวกัน ต่างกันที่วางไฟล์ไว้ที่ไหนและใครเข้าถึงได้</p>
+
+<h3>แบบที่ 1 · เครื่องเดียวจบ</h3>
+<p>วางไฟล์ทั้งชุดไว้บนเครื่องหลักเครื่องเดียว ผู้วางแผนใช้คนเดียว ไม่มีการแบ่งปัน</p>
+<table><thead><tr><th>ข้อดี</th><th>ข้อด้อย</th></tr></thead><tbody>
+<tr><td>เริ่มใช้ได้ทันที ไม่ต้องขออนุมัติใคร</td><td>คนอื่นดูข้อมูลไม่ได้เลย</td></tr>
+<tr><td>ไม่มีความเสี่ยงเรื่องข้อมูลรั่วไหล</td><td>ถ้าเครื่องเสียและไม่ได้สำรอง ข้อมูลหายทั้งหมด</td></tr>
+<tr><td>เร็วที่สุด ไม่ต้องรอเครือข่าย</td><td>สแกน QR ด้วยกล้องไม่ได้</td></tr>
+</tbody></table>
+<p class="muted">เหมาะกับ: สัปดาห์แรกที่ยังทดลองว่าระบบตอบโจทย์หรือไม่</p>
+
+<h3>แบบที่ 2 · เครื่องหลักบันทึก ไดรฟ์แผนกให้ดู</h3>
+<p>ฉบับบันทึกข้อมูลอยู่บนเครื่องหลัก ฉบับดูอย่างเดียวและไฟล์สำรองอยู่บนไดรฟ์ของแผนก</p>
+<table><thead><tr><th>ข้อดี</th><th>ข้อด้อย</th></tr></thead><tbody>
+<tr><td>หัวหน้าและผู้บริหารเปิดดูเองได้ ไม่ต้องรอรายงาน</td><td>ข้อมูลที่ผู้ดูเห็นเป็นของ ณ เวลาที่สำรองไว้ ไม่ใช่ปัจจุบัน</td></tr>
+<tr><td>เปิดพร้อมกันได้ไม่จำกัดคน เพราะเป็นการอ่านอย่างเดียว</td><td>ผู้วางแผนต้องวางไฟล์สำรองสม่ำเสมอ ถ้าลืมข้อมูลจะเก่า</td></tr>
+<tr><td>สิทธิ์การเข้าถึงคุมด้วยระบบของ Windows ที่มีอยู่แล้ว</td><td>ผู้ดูต้องเลือกไฟล์ .json ทุกครั้งที่เปิด</td></tr>
+<tr><td>ไม่ต้องขอ IT เพิ่ม ไม่ส่งข้อมูลออกนอกองค์กร</td><td>ยังไม่ใช่การควบคุมการเข้าถึงตาม ISO/IEC 17025 ข้อ 7.11</td></tr>
+</tbody></table>
+<p class="muted">เหมาะกับ: ระยะนำร่องที่มีผู้เกี่ยวข้องหลายคน — เป็นแบบที่แนะนำในขณะนี้</p>
+
+<h4>การสร้างทางลัดให้ผู้ใช้</h4>
+<p>เพื่อไม่ให้ทุกคนต้องเดินหาโฟลเดอร์ทุกครั้ง</p>
+<ol><li>บนไดรฟ์ของแผนก คลิกขวาที่ไฟล์ LAB_STD_Tracker_ViewOnly.html</li>
+<li>เลือก Show more options ถ้าใช้ Windows 11 แล้วเลือก Send to จากนั้นเลือก Desktop (create shortcut)</li>
+<li>จะได้ไฟล์ทางลัดบนหน้าจอ เปลี่ยนชื่อเป็น ระบบติดตามสอบเทียบ STD เพื่อให้เข้าใจง่าย</li>
+<li>คัดลอกไฟล์ทางลัดนี้ส่งให้ผู้ใช้คนอื่นทางอีเมลหรือวางบนไดรฟ์ ทุกคนวางไว้บนหน้าจอตัวเองได้</li></ol>
+<div class="note"><b>ทางลัดไม่ใช่สำเนา</b> ไฟล์ทางลัดเป็นเพียงตัวชี้ไปยังไฟล์จริงบนไดรฟ์ เมื่อผู้ดูแลอัปเดตไฟล์โปรแกรม ทุกคนจะได้ตัวใหม่ทันทีโดยไม่ต้องส่งไฟล์ใหม่ให้ทีละคน แต่ถ้าย้ายหรือเปลี่ยนชื่อไฟล์ต้นทาง ทางลัดของทุกคนจะใช้ไม่ได้</div>
+<p>หากผู้ใช้บางคนต้องเปิดจากมือถือหรือแท็บเล็ต ให้พิจารณาแบบที่ 3 แทน เพราะไดรฟ์ของแผนกมักเข้าถึงจากอุปกรณ์พกพาไม่ได้</p>
+
+<h3>แบบที่ 3 · นำขึ้นเว็บภายในองค์กร</h3>
+<p>นำฉบับบันทึกข้อมูลขึ้น GitHub Pages หรือเว็บเซิร์ฟเวอร์ขององค์กร</p>
+<table><thead><tr><th>ข้อดี</th><th>ข้อด้อย</th></tr></thead><tbody>
+<tr><td>สแกน QR ด้วยกล้องได้ ซึ่งใช้ได้เฉพาะบน https</td><td>ข้อมูลยังอยู่ในเบราว์เซอร์ของแต่ละเครื่องอยู่ดี ไม่ได้แชร์กันจริง</td></tr>
+<tr><td>สแกนป้ายด้วยมือถือแล้วเปิดหน้าเครื่องมือได้ทันที</td><td>ถ้าใช้ GitHub แบบสาธารณะ ข้อมูลที่ฝังในไฟล์จะเห็นได้ทั่วอินเทอร์เน็ต</td></tr>
+<tr><td>เปิดจากมือถือและแท็บเล็ตได้</td><td>ต้องมีคนดูแลการอัปเดตไฟล์บนเว็บ</td></tr>
+<tr><td>อัปเดตโปรแกรมครั้งเดียว ทุกคนได้พร้อมกัน</td><td>อาจต้องผ่านการอนุมัติจากฝ่ายสารสนเทศ</td></tr>
+</tbody></table>
+<p class="muted">เหมาะกับ: เมื่อเริ่มใช้ป้าย QR จริงจัง</p>
+<div class="note"><b>หากนำขึ้นเว็บสาธารณะ</b> ควรถอดข้อมูลออกจากไฟล์โปรแกรมก่อน แล้วนำเข้าจากไฟล์ Excel หลังจากนั้น เพื่อให้บนอินเทอร์เน็ตมีเพียงตัวโปรแกรมเปล่า ไม่มีเลขทรัพย์สินหรือเลขที่ใบรับรอง</div>
+
+<h3>สรุปการเลือก</h3>
+<table><thead><tr><th>สถานการณ์</th><th>รูปแบบที่เหมาะ</th></tr></thead><tbody>
+<tr><td>ทดลองคนเดียวก่อน</td><td>แบบที่ 1</td></tr>
+<tr><td>มีหัวหน้าหรือผู้บริหารต้องการดูข้อมูล</td><td>แบบที่ 2</td></tr>
+<tr><td>เริ่มติดป้าย QR ที่เครื่องมือ</td><td>แบบที่ 3 ควบคู่กับแบบที่ 2</td></tr>
+<tr><td>ต้องการให้หลายคนบันทึกข้อมูลพร้อมกันจริง</td><td>ไม่มีแบบใดรองรับ ต้องย้ายไป SharePoint</td></tr>
+</tbody></table>
+<div class="note"><b>ข้อจำกัดร่วมของทั้งสามแบบ</b> ข้อมูลเก็บอยู่ในเบราว์เซอร์ของแต่ละเครื่อง จึงมีผู้บันทึกข้อมูลได้เพียงเครื่องเดียวเสมอ การให้หลายคนบันทึกพร้อมกันต้องรอการย้ายไป SharePoint หรือ Microsoft 365 ขององค์กร</div>`},
 
 {id:'d9',t:'9. แก้ปัญหาที่พบบ่อย',h:`
 <h2>แก้ปัญหาที่พบบ่อย</h2>
@@ -1785,6 +2180,37 @@ function healthCheck(){
     closeModal(); fillCatSelects(); renderHeader(); render('dash'); toast('ลบแล้ว '+ids.length+' รายการ');
   }),400);
 }
+/* ---------- การรับทราบการแจ้งเตือน ---------- */
+function ackList(){ db.acks=db.acks||[]; return db.acks; }
+function ackToday(){ return ackList().find(a=>a.date===todayStr()); }
+function renderAck(){
+  const box=$('#ackBox'); if(!box) return;
+  const list=ackList().slice().sort((a,b)=>a.date<b.date?1:-1).slice(0,8);
+  const t=ackToday();
+  const pending = (typeof planStatus==='function')
+    ? liveStds().filter(s=>{const k=planStatus(s).k; return k==='late'||(k==='act'&&!jobFor(s.id))||k==='prep';}).length : 0;
+  box.innerHTML =
+    (t? '<div class="note" style="margin-top:0"><b>รับทราบแล้ววันนี้</b> โดย '+esc(t.by||'ไม่ระบุชื่อ')+' เวลา '+esc(t.time)+' · ขณะนั้นมี '+t.n+' รายการต้องดำเนินการ</div>'
+      : '<div style="padding:12px 14px;border-left:4px solid var(--thai-gold);background:var(--noteBg);border-radius:0 9px 9px 0;margin-bottom:12px">'+
+        '<b style="color:var(--thai-gold)">ยังไม่ได้รับทราบสถานะของวันนี้</b>'+
+        '<div class="muted" style="margin:4px 0 10px">มี '+pending+' รายการที่ต้องดำเนินการ กดรับทราบเพื่อบันทึกว่าได้ตรวจสอบแล้ว</div>'+
+        '<div class="row"><div style="flex:1;min-width:150px"><input type="text" id="ackBy" placeholder="ชื่อผู้รับทราบ"></div>'+
+        '<button class="btn sm" id="btnAck">รับทราบ</button></div></div>')+
+    (list.length? '<label class="f" style="margin-top:6px">ประวัติการรับทราบ</label><ul class="steps">'+
+      list.map(a=>'<li><span class="dt">'+fmt(a.date)+' '+esc(a.time)+'</span><span><b>'+esc(a.by||'ไม่ระบุชื่อ')+'</b> · '+a.n+' รายการค้าง'+
+        (a.note?'<br><span class="muted">'+esc(a.note)+'</span>':'')+'</span></li>').join('')+'</ul>'
+      : '<p class="muted" style="margin:10px 0 0">ยังไม่มีประวัติ · การกดรับทราบทุกวันเป็นหลักฐานว่าคำเตือนถึงมือผู้รับผิดชอบจริง ซึ่งผู้ตรวจ ISO มักขอดู</p>');
+  const b=$('#btnAck');
+  if(b) b.onclick=()=>{
+    const by=$('#ackBy').value.trim();
+    if(!by) return toast('กรุณาระบุชื่อผู้รับทราบ');
+    ackList().unshift({date:todayStr(),time:new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}),by,n:pending});
+    db.acks=ackList().slice(0,400);
+    save('รับทราบสถานะประจำวันโดย '+by+' · '+pending+' รายการค้าง');
+    renderAck(); toast('บันทึกการรับทราบแล้ว');
+  };
+}
+
 /* ---------- ส่งรายงานตามเวลา และส่งย้อนหลังเมื่อเปิดเครื่องช้า ---------- */
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function dueForDigest(){
@@ -1864,7 +2290,10 @@ function digestMode(){
   const box=document.createElement('div'); box.className='digest';
   const done=(t,sub)=>{ box.innerHTML='<div class="box"><h2>'+t+'</h2><p>'+sub+'</p>'+
     '<div class="num">'+need+'</div><p>รายการที่ต้องดำเนินการวันนี้</p>'+
-    '<button class="btn gold" onclick="location.search=\'\'">เปิดระบบเต็มรูปแบบ</button></div>'; };
+    '<button class="btn gold" id="dgExit">เปิดระบบเต็มรูปแบบ</button></div>';
+    const x=document.getElementById('dgExit');
+    if(x) x.onclick=()=>{ box.remove(); history.replaceState(null,'',location.href.split('?')[0]);
+      renderHeader(); render('dash'); healthCheck&&healthCheck(); }; };
   document.body.appendChild(box);
   box.innerHTML='<div class="box"><h2>กำลังสร้างรายงานประจำวัน</h2><p>โปรดรอสักครู่</p></div>';
 
